@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>一覧ページ</title>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/js/indexData.js"></script>
+<link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
+<link href="css/table.css" th:href="@{css/table.css}" rel="stylesheet"></link>
+</head>
+<body>
+	<div th:replace="template :: header"></div>
+	<form class="search">
+		<div>
+			<label class="name-label" for="name">タイトル検索</label>
+			<div>
+				<textarea rows="2" cols="50" maxlength='100' id="name"
+					placeholder='検索したい商品の名前を入力してください'></textarea>
+			</div>
+		</div>
+		<div class="search_button">
+			<input type="button" id="search_get" value="検索" />
+		</div>
+	</form>
+	<h1>商品一覧</h1>
+	<table class="type">
+		<thead>
+			<tr>
+				<th scope="col">商品ID</th>
+				<th scope="col">商品画像</th>
+				<th scope="col">タイトル</th>
+				<th scope="col">商品価格</th>
+				<th scope="col">商品へのリンク</th>
+			</tr>
+		</thead>
+		<tbody id="output">
+		</tbody>
+	</table>
+	<div th:replace="template :: footer"></div>
+</body>
+</html>

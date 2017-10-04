@@ -1,0 +1,48 @@
+textarea {
+	background: #eee;
+	border: 1px solid #bebebe;
+	font-size: 1em;
+}
+
+textarea:focus {
+	background: #edf4ff;
+	border: 1px solid #4881d9;
+}
+
+.create_page {
+	position: relative;
+	margin: 2em 0;
+	padding: 0.5em 1.5em;
+}
+
+.create_page .box-title {
+	position: absolute;
+	display: inline-block;
+	top: -13px;
+	left: 10px;
+	padding: 0 12px;
+	line-height: 2;
+	font-size: 22px;
+	background: #95ccff;
+	color: black;
+	font-weight: bold;
+}
+
+.create_page .name-label, .create_name, .introduction-label,
+	.create_introduction, .price-label, .create_price, .create_file {
+	position: relative;
+	top: 30px;
+	margin: 10px;
+}
+
+.create_page .preview {
+	margin: 10px;
+	padding: 0.5em 1.5em;
+	text-align: center;
+}
+
+.create_page .create_upload {
+	position: relative;
+	top: 10px;
+	margin: 10px;
+}

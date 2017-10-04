@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--引数の title, links は fragment expressions */-->
+<head th:fragment="base_header(links)">
+<!--/* 必ず読み込むファイル */-->
+<link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
+</head>
+<header th:fragment="header">
+	<ul id="menu">
+		<li id="menu01"><a href="/" class="pageChange">TOP</a></li>
+		<li id="menu02"><a href="/create" class="pageChange">CREATE</a></li>
+	</ul>
+</header>
+<footer th:fragment="footer">
+	<hr></hr>
+	<p>Copyright 2017 Restful Api</p>
+</footer>
+</html>

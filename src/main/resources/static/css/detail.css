@@ -1,0 +1,25 @@
+.image {
+	margin: 30px;
+	padding: 0.5em 1.5em;
+	text-align: center;
+}
+
+.introduction_production {
+	margin: 2em 0;
+	background: #dcefff;
+}
+
+.introduction_production .box-title {
+	font-size: 1.2em;
+	background: #5fb3f5;
+	padding: 4px;
+	text-align: center;
+	color: #FFF;
+	font-weight: bold;
+	letter-spacing: 0.05em;
+}
+
+.introduction_production p {
+	padding: 15px 20px;
+	margin: 0;
+}

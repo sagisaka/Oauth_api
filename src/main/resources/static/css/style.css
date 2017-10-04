@@ -1,0 +1,36 @@
+body {
+	background-color: #DDDDDD; /*ページ全体の背景色*/
+}
+
+ul#menu {
+	height: 42px;
+	background-color: #eeeeee;
+	font-weight: bold;
+}
+
+li#menu01, li#menu02 {
+	float: left; /*リスト項目を横に並べる*/
+	display: inline; /*リスト項目をインライン表示にする*/
+	list-style-type: none; /*リストマーカー無しにする*/
+}
+
+li#menu01 {
+	width: 164px;
+	height: 42px;
+	background: #cde4ff;
+}
+
+li#menu02 {
+	width: 164px;
+	height: 42px;
+	background: #CCFF33;
+}
+
+ul#menu a {
+	display: block; /*リンクをブロック表示にする*/
+	height: 40px;
+	padding-top: 4px;
+	text-align: center;
+	text-decoration: none; /*リンクの下線を無くす*/
+	font-family: Arial, Helvetica, sans-serif; /*フォントの種類*/
+}

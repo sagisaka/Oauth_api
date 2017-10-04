@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>詳細ページ</title>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+	th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js}"></script>
+<script src="/js/ditailData.js"></script>
+<script src="/js/image.js"></script>
+<link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
+<link href="css/table.css" th:href="@{css/table.css}" rel="stylesheet"></link>
+<link href="css/form.css" th:href="@{css/form.css}" rel="stylesheet"></link>
+<link href="css/detail.css" th:href="@{css/detail.css}" rel="stylesheet"></link>
+</head>
+<body>
+	<div th:replace="template :: header"></div>
+	<table class="type">
+		<thead>
+			<tr>
+				<th scope="col">商品ID</th>
+				<th scope="col">タイトル</th>
+				<th scope="col">商品価格</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="entity : ${data}">
+				<td id="s" th:text="${entity.id}"></td>
+				<td th:text="${entity.name}"></td>
+				<td th:text="${price}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="image">
+		<img id="img" width="800" th:src="${image}" />
+	</div>
+	<div class="introduction_production">
+		<div class="box-title">商品の紹介</div>
+		<p th:text="${introduction}"></p>
+	</div>
+	<div th:replace="template :: footer"></div>
+</body>
+</html>
