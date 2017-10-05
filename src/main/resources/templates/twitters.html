@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>Hello Twitter</title>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/js/indexData.js"></script>
+<link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
+<link href="css/table.css" th:href="@{css/table.css}" rel="stylesheet"></link>
+</head>
+<body>
+
+	<div th:replace="template :: header"></div>
+
+	<form class="logout_button">
+		<div class="logout">
+			<a href="/logout">ログアウト</a>
+		</div>
+	</form>
+
+	<h3>
+		こんにちは, <span th:text="${twitterProfile.name}">Some User</span>!
+	</h3>
+
+	<h4>These are your friends:</h4>
+
+	<ul>
+		<li th:each="friend:${friends}" th:text="${friend.name}">Friend</li>
+	</ul>
+	<ul>
+		<li th:each="tweet:${tweets}" th:text="${tweet.source}">tweet</li>
+		<li th:each="tweet:${tweets}" th:text="${tweet.text}">tweet</li>
+	</ul>
+	<div th:replace="template :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" http-equiv="refresh" content="5;URL=/twitter"/>
+	<title>ログイン完了</title>
+	<link href="../css/style.css" th:href="@{../css/style.css}" rel="stylesheet"></link>
+
+</head>
+<body>
+
+	<div th:replace="template :: header"></div>
+
+	<h3>Twitterに接続完了</h3>
+
+	<p>
+		Twitterに接続完了しました。
+		自動的にアプリケーションページに遷移します。
+		今すぐ移動するなら<a href="/twitter">ここ</a>をクリックする。
+	</p>
+
+	<div th:replace="template :: footer"></div>
+
+</body>
+</html>
