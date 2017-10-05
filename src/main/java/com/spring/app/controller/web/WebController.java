@@ -53,6 +53,9 @@ public class WebController {
 	
 	@GetMapping("/logout")
 	public String logout() {
+		if (connectionRepository.findPrimaryConnection(Twitter.class) == null) {
+			return "redirect:/login";
+		}
 		connectionRepository.removeConnections("twitter");
 		return "logout";
 	}
@@ -64,6 +67,9 @@ public class WebController {
 
 	@GetMapping(value="/{id}")
 	public String detail(@PathVariable("id") String id, Model model) {
+		if (connectionRepository.findPrimaryConnection(Twitter.class) == null) {
+			return "redirect:/login";
+		}
 		try {
 			Product product = service.findOne(Integer.parseInt(id));
 			if(product == null){
@@ -81,6 +87,9 @@ public class WebController {
 
 	@GetMapping(value="/create")
 	public String create() {
+		if (connectionRepository.findPrimaryConnection(Twitter.class) == null) {
+			return "redirect:/login";
+		}
 		return "create";
 	}
 }
