@@ -8,11 +8,7 @@ ul#menu {
 	font-weight: bold;
 }
 
-<<<<<<< HEAD
 li#menu01, li#menu02, li#menu03 {
-=======
-li#menu01, li#menu02 {
->>>>>>> origin/master
 	float: left; /*リスト項目を横に並べる*/
 	display: inline; /*リスト項目をインライン表示にする*/
 	list-style-type: none; /*リストマーカー無しにする*/
@@ -30,15 +26,12 @@ li#menu02 {
 	background: #CCFF33;
 }
 
-<<<<<<< HEAD
 li#menu03 {
 	width: 164px;
 	height: 42px;
 	background: #FFC0CB;
 }
 
-=======
->>>>>>> origin/master
 ul#menu a {
 	display: block; /*リンクをブロック表示にする*/
 	height: 40px;
