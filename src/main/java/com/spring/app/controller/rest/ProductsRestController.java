@@ -80,7 +80,11 @@ public class ProductsRestController {
 
 	// 商品一件削除
 	@DeleteMapping(value="{id:[0-9]+$}")
-	public void deleteproduct(@PathVariable Integer id) {
+	public void deleteproduct(HttpServletResponse response,@PathVariable Integer id) throws IOException {
+		Product product = service.findOne(id);
+		if(product == null){
+			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
+		}
 		service.delete(id);
 	}
 

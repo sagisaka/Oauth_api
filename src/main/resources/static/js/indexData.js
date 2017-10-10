@@ -15,7 +15,7 @@ function allData(){
 			}
 		},
 		error: function() {         // HTTPエラー時
-			alert("Server Error. Pleasy try again later.");
+			alert("商品リストを取得できませんでした");
 		}
 	});
 }
@@ -40,7 +40,7 @@ function search(){
 				}
 			},
 			error: function() {         // HTTPエラー時
-				alert("Server Error. Pleasy try again later.");
+				alert("タイトル名と同名の商品リストを取得できませんでした");
 			},
 			complete: function() {
 				button.attr("disabled", false);
