@@ -72,8 +72,7 @@ public class ProductsRestController {
 				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/resources/static/image/" + file.getOriginalFilename()))) {
 			FileCopyUtils.copy(in, out);
 		} catch (IOException e) {
-			response.sendError(HttpStatus.BAD_REQUEST.value(),"ファイルが見つかりませんでした");
-			return null;
+			response.sendError(HttpStatus.BAD_REQUEST.value(),e.getMessage());
 		}
 		return service.update(id,product,anotherProduct,file.getOriginalFilename());
 	}
@@ -96,8 +95,7 @@ public class ProductsRestController {
 				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/resources/static/image/" + file.getOriginalFilename()))) {
 			FileCopyUtils.copy(in, out);
 		} catch (IOException e) {
-			response.sendError(HttpStatus.NOT_FOUND.value(),"ファイルが見つかりませんでした");
-			return null;
+			response.sendError(HttpStatus.NOT_FOUND.value(),e.getMessage());
 		}
 		return service.create(product,file.getOriginalFilename());
 	}
