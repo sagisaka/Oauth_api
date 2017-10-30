@@ -34,7 +34,7 @@ public class WebController {
 	}
 
 	@GetMapping("/twitter")
-	public String hello(Model model) {
+	public String hello(Model model) {		
 		CursoredList<TwitterProfile> friends = twitter.friendOperations().getFriends();
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
 		model.addAttribute(twitter.userOperations().getUserProfile());

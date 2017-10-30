@@ -12,12 +12,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.oauth1.AuthorizedRequestToken;
 import org.springframework.social.oauth1.OAuth1Operations;
 import org.springframework.social.oauth1.OAuthToken;
 import org.springframework.social.twitter.api.Twitter;
-import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.social.twitter.connect.TwitterConnectionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -28,12 +28,11 @@ import com.spring.app.model.OauthToken;
 public class LoggingFilter implements Filter {
 
 	private ConnectionRepository connectionRepository;
-	private Twitter twitter;
-	
+		
 	OauthToken token = new OauthToken();
+	
 	@Inject
-	public LoggingFilter(Twitter twitter,ConnectionRepository connectionRepository) {
-		this.twitter = twitter;
+	public LoggingFilter(ConnectionRepository connectionRepository) {
 		this.connectionRepository = connectionRepository;
 	}
 
@@ -58,18 +57,13 @@ public class LoggingFilter implements Filter {
 			OAuth1Operations oauthOperations = connectionFactory.getOAuthOperations();
 			OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
 			AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
-			//コンフリクト
-			if(StringUtils.isEmpty(token.getOauth_token())){
-				OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
-				token.setOauth_token(accessToken.getValue());
-				token.setOauth_verifier(accessToken.getSecret());
-				System.out.println("Access Token:"+accessToken.getValue());
-				System.out.println("Access Token Secret:"+accessToken.getSecret());
-			}
-		}
-		if(!StringUtils.isEmpty(token.getOauth_token())){
-			twitter = new TwitterTemplate("PgJdaamNXGzzKYWf5zEgdNmzN","tC7soU8JLmh72qpjLZJ2GbcpCC1Eek3lRp7mt3yRCBZyDAPSIL", token.getOauth_token(), token.getOauth_verifier());
-			System.out.println(twitter.userOperations().getUserProfile().getName());
+			OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
+			Connection<Twitter> connection = connectionFactory.createConnection(accessToken);
+			token.setOauth_token(accessToken.getValue());
+			token.setOauth_verifier(accessToken.getSecret());
+			System.out.println("Access Token:"+accessToken.getValue());
+			System.out.println("Access Token Secret:"+accessToken.getSecret());
+			connectionRepository.addConnection(connection);
 		}
 		chain.doFilter(request, response);
 		System.out.println("After!!");
@@ -83,10 +77,10 @@ public class LoggingFilter implements Filter {
 	}
 
 	private boolean isLoginCheckPage(String nextUrl){
-		if (!(isLoginCheckPath(nextUrl)) && connectionRepository.findPrimaryConnection(Twitter.class) == null
+		if (!(isLoginCheckPath(nextUrl))
+				&& connectionRepository.findPrimaryConnection(Twitter.class) == null
 				&& !("/connect/twitter".equals(nextUrl))
-				&& !("/".equals(nextUrl))
-				&& StringUtils.isEmpty(token.getOauth_token())){
+				&& !("/".equals(nextUrl))){
 			return true;
 		}
 		return false;
