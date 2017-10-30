@@ -28,9 +28,9 @@ import com.spring.app.model.OauthToken;
 public class LoggingFilter implements Filter {
 
 	private ConnectionRepository connectionRepository;
-		
+
 	OauthToken token = new OauthToken();
-	
+
 	@Inject
 	public LoggingFilter(ConnectionRepository connectionRepository) {
 		this.connectionRepository = connectionRepository;
@@ -54,21 +54,24 @@ public class LoggingFilter implements Filter {
 			String oauth_token = request.getParameter("oauth_token");
 			String oauth_verifier = request.getParameter("oauth_verifier");
 			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory("PgJdaamNXGzzKYWf5zEgdNmzN","tC7soU8JLmh72qpjLZJ2GbcpCC1Eek3lRp7mt3yRCBZyDAPSIL");
-			OAuth1Operations oauthOperations = connectionFactory.getOAuthOperations();
-			OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
-			AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
-			OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
-			Connection<Twitter> connection = connectionFactory.createConnection(accessToken);
-			token.setOauth_token(accessToken.getValue());
-			token.setOauth_verifier(accessToken.getSecret());
-			System.out.println("Access Token:"+accessToken.getValue());
-			System.out.println("Access Token Secret:"+accessToken.getSecret());
+			Connection<Twitter> connection = connectionFactory.createConnection(accessToken(oauth_token,oauth_verifier));
 			connectionRepository.addConnection(connection);
 		}
 		chain.doFilter(request, response);
 		System.out.println("After!!");
 	}
 
+	public OAuthToken accessToken(String oauth_token,String oauth_verifier){
+		TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory("PgJdaamNXGzzKYWf5zEgdNmzN","tC7soU8JLmh72qpjLZJ2GbcpCC1Eek3lRp7mt3yRCBZyDAPSIL");
+		OAuth1Operations oauthOperations = connectionFactory.getOAuthOperations();
+		OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
+		AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
+		OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
+		token.setOauth_token(accessToken.getValue());
+		token.setOauth_verifier(accessToken.getSecret());
+		return accessToken;
+	}
+	
 	private boolean isLoginCheckPath(String requestUri) {
 		if(requestUri.contains("js/") || requestUri.contains("css/") || requestUri.contains("api/") || requestUri.contains("image/")){
 			return true;
