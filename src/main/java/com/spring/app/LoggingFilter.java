@@ -31,6 +31,9 @@ public class LoggingFilter implements Filter {
 
 	OauthToken token = new OauthToken();
 
+	private String app_id = "PgJdaamNXGzzKYWf5zEgdNmzN";
+	private String app_secret = "tC7soU8JLmh72qpjLZJ2GbcpCC1Eek3lRp7mt3yRCBZyDAPSIL";
+	
 	@Inject
 	public LoggingFilter(ConnectionRepository connectionRepository) {
 		this.connectionRepository = connectionRepository;
@@ -40,7 +43,7 @@ public class LoggingFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 		System.out.println("init!!");
 	}
-
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -53,7 +56,8 @@ public class LoggingFilter implements Filter {
 		if(!StringUtils.isEmpty(request.getParameter("oauth_token"))){
 			String oauth_token = request.getParameter("oauth_token");
 			String oauth_verifier = request.getParameter("oauth_verifier");
-			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory("PgJdaamNXGzzKYWf5zEgdNmzN","tC7soU8JLmh72qpjLZJ2GbcpCC1Eek3lRp7mt3yRCBZyDAPSIL");
+			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(app_id,app_secret);
+			//token認証でtwitterログイン
 			Connection<Twitter> connection = connectionFactory.createConnection(accessToken(oauth_token,oauth_verifier));
 			connectionRepository.addConnection(connection);
 		}
@@ -62,7 +66,7 @@ public class LoggingFilter implements Filter {
 	}
 
 	public OAuthToken accessToken(String oauth_token,String oauth_verifier){
-		TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory("PgJdaamNXGzzKYWf5zEgdNmzN","tC7soU8JLmh72qpjLZJ2GbcpCC1Eek3lRp7mt3yRCBZyDAPSIL");
+		TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(app_id,app_secret);
 		OAuth1Operations oauthOperations = connectionFactory.getOAuthOperations();
 		OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
 		AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
