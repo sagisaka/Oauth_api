@@ -15,7 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.spring.app.model.OauthToken;
 import com.spring.app.model.Product;
+import com.spring.app.repository.OauthTokenRepository;
 import com.spring.app.service.ProductsService;
 
 @Controller
@@ -23,10 +25,13 @@ public class WebController {
 	@Autowired
 	ProductsService service;
 
+	@Autowired
+	private OauthTokenRepository repository;
+	
 	private Twitter twitter;
 
 	private ConnectionRepository connectionRepository;
-
+	
 	@Inject
 	public WebController(Twitter twitter, ConnectionRepository connectionRepository) {
 		this.twitter = twitter;
@@ -39,7 +44,9 @@ public class WebController {
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
 		model.addAttribute(twitter.userOperations().getUserProfile());
 		model.addAttribute("friends", friends);
-		model.addAttribute("tweets",tweets);
+		model.addAttribute("tweets",tweets);	
+		List<OauthToken> oauthToken = repository.findAll();
+		model.addAttribute("token",oauthToken);
 		return "twitterProfile";
 	}
 
