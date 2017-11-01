@@ -103,9 +103,9 @@ public class LoggingFilter implements Filter {
 		token.setCheckLogin(true);
 		List<OauthToken> oauthTokens = oauthTokenService.find(accessToken.getValue());
 		List<OauthToken> oauthTokenAll = oauthTokenService.findAll();
-		
 		if(oauthTokenAll.isEmpty()) oauthTokenService.create(token);
 		else if(oauthTokens.isEmpty()) oauthTokenService.update(token);
+		else oauthTokenService.updateCheck(true);
 		return accessToken;
 	}
 	

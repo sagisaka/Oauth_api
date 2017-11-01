@@ -41,6 +41,7 @@ public class OauthTokenService {
 		oauthToken.setAccessToken(anotherOauthToken.getAccessToken());
 		oauthToken.setAccessVerifier(anotherOauthToken.getAccessVerifier());
 		oauthToken.setOAuthToken(anotherOauthToken.getOAuthToken());
+		oauthToken.setCheckLogin(true);
 		return repository.save(oauthToken);
 	}
 	public OauthToken updateCheck(Boolean check) {
