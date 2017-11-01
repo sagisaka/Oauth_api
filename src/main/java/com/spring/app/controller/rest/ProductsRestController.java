@@ -74,7 +74,7 @@ public class ProductsRestController {
 		} catch (IOException e) {
 			response.sendError(HttpStatus.BAD_REQUEST.value(),e.getMessage());
 		}
-		return service.update(id,product,anotherProduct,file.getOriginalFilename());
+		return service.update(product,anotherProduct,file.getOriginalFilename());
 	}
 
 	// 商品一件削除

@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.spring.app.model.OauthToken;
-import com.spring.app.repository.OauthTokenRepository;
+import com.spring.app.service.OauthTokenService;
 
 @Component
 public class LoggingFilter implements Filter {
@@ -36,9 +36,11 @@ public class LoggingFilter implements Filter {
 	private ConnectionRepository connectionRepository;
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+	
+	private boolean fa=true;
 
 	@Autowired
-	private OauthTokenRepository repository;
+	private OauthTokenService oauthTokenService;
 	
 	private OauthToken token = new OauthToken();
 	
@@ -59,6 +61,14 @@ public class LoggingFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		logger.info("Before!!");
+		List<OauthToken> oauthToken2 = oauthTokenService.checkLogin(true);
+		if(!oauthToken2.isEmpty() && fa){
+			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
+			Connection<Twitter> connection = connectionFactory.createConnection(oauthToken2.get(0).getOAuthToken());
+			connectionRepository.addConnection(connection);
+			logger.info("ログイン");
+		}
+		fa=false;
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String nextUrl = httpRequest.getRequestURI();
@@ -87,10 +97,15 @@ public class LoggingFilter implements Filter {
 		OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
 		AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
 		OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
-		token.setOauthToken(accessToken.getValue());
-		token.setOauthVerifier(accessToken.getSecret());
-		List<OauthToken> oauthTokens =repository.findByOauthToken(accessToken.getValue());
-		if(oauthTokens.isEmpty()) repository.save(token);
+		token.setAccessToken(accessToken.getValue());
+		token.setAccessVerifier(accessToken.getSecret());
+		token.setOAuthToken(accessToken);
+		token.setCheckLogin(true);
+		List<OauthToken> oauthTokens = oauthTokenService.find(accessToken.getValue());
+		List<OauthToken> oauthTokenAll = oauthTokenService.findAll();
+		
+		if(oauthTokenAll.isEmpty()) oauthTokenService.create(token);
+		else if(oauthTokens.isEmpty()) oauthTokenService.update(token);
 		return accessToken;
 	}
 	

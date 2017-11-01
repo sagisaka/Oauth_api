@@ -37,7 +37,7 @@ public class ProductsService {
 	}
 
 	// 商品一件更新
-	public Product update(Integer id, Product product, Product anotherProduct, String fileName) {
+	public Product update(Product product, Product anotherProduct, String fileName) {
 		product.setName(anotherProduct.getName());
 		product.setIntroduction(anotherProduct.getIntroduction());
 		product.setPrice(anotherProduct.getPrice());

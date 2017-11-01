@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.spring.app.model.OauthToken;
 import com.spring.app.model.Product;
-import com.spring.app.repository.OauthTokenRepository;
+import com.spring.app.service.OauthTokenService;
 import com.spring.app.service.ProductsService;
 
 @Controller
 public class WebController {
 	@Autowired
-	ProductsService service;
+	private ProductsService productsService;
 
 	@Autowired
-	private OauthTokenRepository repository;
+	private OauthTokenService oauthTokenService;
 	
 	private Twitter twitter;
 
@@ -39,13 +39,14 @@ public class WebController {
 	}
 
 	@GetMapping("/twitter")
-	public String hello(Model model) {		
+	public String twitter(Model model) {		
 		CursoredList<TwitterProfile> friends = twitter.friendOperations().getFriends();
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
+		List<OauthToken> oauthToken = oauthTokenService.findAll();
+		System.out.println(oauthToken.size());
 		model.addAttribute(twitter.userOperations().getUserProfile());
 		model.addAttribute("friends", friends);
 		model.addAttribute("tweets",tweets);	
-		List<OauthToken> oauthToken = repository.findAll();
 		model.addAttribute("token",oauthToken);
 		return "twitterProfile";
 	}
@@ -53,6 +54,7 @@ public class WebController {
 	@GetMapping("/logout")
 	public String logout() {
 		connectionRepository.removeConnections("twitter");
+		oauthTokenService.updateCheck(false);
 		return "logout";
 	}
 
@@ -64,14 +66,14 @@ public class WebController {
 	@GetMapping(value="/{id}")
 	public String detail(@PathVariable("id") String id, Model model) {
 		try {
-			Product product = service.findOne(Integer.parseInt(id));
+			Product product = productsService.findOne(Integer.parseInt(id));
 			if(product == null){
 				return "nullDetail";
 			}
 			model.addAttribute("image","/image/"+product.getImageUrl());
 			model.addAttribute("introduction",product.getIntroduction());
 			model.addAttribute("price",product.getPrice()+"円");
-			model.addAttribute("data",service.findOne(Integer.parseInt(id)));
+			model.addAttribute("data",productsService.findOne(Integer.parseInt(id)));
 			return "detail";
 		} catch (NumberFormatException e) {
 			return "nullDetail";

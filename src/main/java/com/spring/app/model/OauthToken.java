@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.social.oauth1.OAuthToken;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +22,11 @@ public class OauthToken {
 	@GeneratedValue
 	private Integer id;
 	
-	private String oauthToken;
+	private String accessToken;
 	
-	private String oauthVerifier;
+	private String accessVerifier;
+	
+	private OAuthToken oAuthToken;
+	
+	private boolean checkLogin;
 }
