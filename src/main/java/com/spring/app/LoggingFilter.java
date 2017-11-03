@@ -42,8 +42,6 @@ public class LoggingFilter implements Filter {
 	
 	@Autowired
 	private OauthTokenService oauthTokenService;
-
-	private OauthToken token = new OauthToken();
 	
 	@Value("${spring.social.twitter.app-id}")
 	private String appId;
@@ -100,15 +98,18 @@ public class LoggingFilter implements Filter {
 		OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
 		AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
 		OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
+		OauthToken token = new OauthToken();
 		token.setAccessToken(accessToken.getValue());
 		token.setAccessVerifier(accessToken.getSecret());
 		token.setOAuthToken(accessToken);
 		token.setCheckLogin(true);
-		List<OauthToken> oauthTokens = oauthTokenService.find(accessToken.getValue());
 		List<OauthToken> oauthTokenAll = oauthTokenService.findAll();
-		if(oauthTokenAll.isEmpty()) oauthTokenService.create(token);
-		else if(oauthTokens.isEmpty()) oauthTokenService.update(token);
-		else oauthTokenService.updateCheck(true);
+		List<OauthToken> oauthTokens = oauthTokenService.find(accessToken.getValue());
+		if(oauthTokenAll.isEmpty() || oauthTokens.isEmpty()){
+			oauthTokenService.create(token);
+		}else{
+			oauthTokenService.updateCheck(oauthTokens.get(0),true);
+		}
 		return accessToken;
 	}
 

@@ -42,7 +42,7 @@ public class WebController {
 	public String twitter(Model model) {		
 		CursoredList<TwitterProfile> friends = twitter.friendOperations().getFriends();
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
-		List<OauthToken> oauthToken = oauthTokenService.findAll();
+		List<OauthToken> oauthToken = oauthTokenService.checkLogin(true);
 		model.addAttribute(twitter.userOperations().getUserProfile());
 		model.addAttribute("friends", friends);
 		model.addAttribute("tweets",tweets);	
@@ -53,7 +53,8 @@ public class WebController {
 	@GetMapping("/logout")
 	public String logout() {
 		connectionRepository.removeConnections("twitter");
-		oauthTokenService.updateCheck(false);
+		List<OauthToken> oauthToken = oauthTokenService.checkLogin(true);
+		oauthTokenService.updateCheck(oauthToken.get(0),false);
 		return "logout";
 	}
 

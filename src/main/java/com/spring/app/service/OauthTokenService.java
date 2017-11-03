@@ -36,16 +36,14 @@ public class OauthTokenService {
 		repository.delete(id);
 	}
 
-	public OauthToken update(OauthToken anotherOauthToken) {
-		OauthToken oauthToken = this.findOne(1);
+	public OauthToken update(OauthToken oauthToken, OauthToken anotherOauthToken) {
 		oauthToken.setAccessToken(anotherOauthToken.getAccessToken());
 		oauthToken.setAccessVerifier(anotherOauthToken.getAccessVerifier());
 		oauthToken.setOAuthToken(anotherOauthToken.getOAuthToken());
 		oauthToken.setCheckLogin(true);
 		return repository.save(oauthToken);
 	}
-	public OauthToken updateCheck(Boolean check) {
-		OauthToken oauthToken = this.findOne(1);
+	public OauthToken updateCheck(OauthToken oauthToken,Boolean check) {
 		oauthToken.setCheckLogin(check);
 		return repository.save(oauthToken);
 	}

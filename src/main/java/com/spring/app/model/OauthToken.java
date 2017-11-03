@@ -17,16 +17,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OauthToken {
-	
+
 	@Id
 	@GeneratedValue
 	private Integer id;
-	
+
 	private String accessToken;
-	
+
 	private String accessVerifier;
-	
+
 	private OAuthToken oAuthToken;
-	
+
 	private boolean checkLogin;
 }
