@@ -43,7 +43,6 @@ public class WebController {
 		CursoredList<TwitterProfile> friends = twitter.friendOperations().getFriends();
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
 		List<OauthToken> oauthToken = oauthTokenService.findAll();
-		System.out.println(oauthToken.size());
 		model.addAttribute(twitter.userOperations().getUserProfile());
 		model.addAttribute("friends", friends);
 		model.addAttribute("tweets",tweets);	

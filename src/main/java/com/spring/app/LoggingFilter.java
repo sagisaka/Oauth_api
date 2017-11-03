@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.oauth1.AuthorizedRequestToken;
@@ -36,17 +37,20 @@ public class LoggingFilter implements Filter {
 	private ConnectionRepository connectionRepository;
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
-	
-	private boolean fa=true;
 
+	private boolean firstLoginCheck=true;
+	
 	@Autowired
 	private OauthTokenService oauthTokenService;
-	
+
 	private OauthToken token = new OauthToken();
 	
-	private String appId = "PgJdaamNXGzzKYWf5zEgdNmzN";
-	private String appSecret = "tC7soU8JLmh72qpjLZJ2GbcpCC1Eek3lRp7mt3yRCBZyDAPSIL";
+	@Value("${spring.social.twitter.app-id}")
+	private String appId;
 	
+	@Value("${spring.social.twitter.app-secret}")
+	private String appSecret;
+
 	@Inject
 	public LoggingFilter(ConnectionRepository connectionRepository) {
 		this.connectionRepository = connectionRepository;
@@ -56,24 +60,27 @@ public class LoggingFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 		logger.info("init!!");
 	}
-	
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		logger.info("Before!!");
 		List<OauthToken> oauthToken2 = oauthTokenService.checkLogin(true);
-		if(!oauthToken2.isEmpty() && fa){
+		if(!oauthToken2.isEmpty() && firstLoginCheck){
 			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
 			Connection<Twitter> connection = connectionFactory.createConnection(oauthToken2.get(0).getOAuthToken());
 			connectionRepository.addConnection(connection);
 			logger.info("ログイン");
 		}
-		fa=false;
+		firstLoginCheck=false;
+		
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String nextUrl = httpRequest.getRequestURI();
 		if (isLoginCheckPage(nextUrl)){
-			((HttpServletResponse)response).sendRedirect("/connect/twitter");
+			httpResponse.sendRedirect("/connect/twitter");
+		}else if(nextUrl.contains("api/") && connectionRepository.findPrimaryConnection(Twitter.class) == null) {
+			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
 		}
 		if(!StringUtils.isEmpty(request.getParameter("oauth_token"))){
 			String oauthToken = request.getParameter("oauth_token");
@@ -83,10 +90,6 @@ public class LoggingFilter implements Filter {
 			Connection<Twitter> connection = connectionFactory.createConnection(accessToken(oauthToken,oauthVerifier));
 			connectionRepository.addConnection(connection);
 		}
-//		if(nextUrl.contains("api/") && connectionRepository.findPrimaryConnection(Twitter.class) == null) {
-//			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
-//			return;
-//		}
 		chain.doFilter(request, response);
 		logger.info("After!!");
 	}
@@ -108,9 +111,9 @@ public class LoggingFilter implements Filter {
 		else oauthTokenService.updateCheck(true);
 		return accessToken;
 	}
-	
+
 	private boolean isLoginCheckPath(String requestUri) {
-		if(requestUri.contains("js/") || requestUri.contains("css/") || requestUri.contains("image/")){
+		if(requestUri.contains("js/") || requestUri.contains("api/") || requestUri.contains("css/") || requestUri.contains("image/")){
 			return true;
 		}
 		return false;
