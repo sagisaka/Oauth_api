@@ -20,11 +20,11 @@
 
 	<h4>
 		id
-		<li th:each="token:${token}" th:text="${token.id}">token</li>
-		アクセストークン
+		<li th:each="token:${token}" th:text="${token.id}">token</li> アクセストークン
 		<li th:each="token:${token}" th:text="${token.accessToken}">token</li>
 		アクセストークシークレット
 		<li th:each="token:${token}" th:text="${token.accessVerifier}">token</li>
+		アクセス状態
 		<li th:each="token:${token}" th:text="${token.checkLogin}">token</li>
 	</h4>
 

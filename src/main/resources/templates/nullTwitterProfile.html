@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hello Twitter</title>
+<link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
+<link href="css/table.css" th:href="@{css/table.css}" rel="stylesheet"></link>
+</head>
+<body>
+
+	<div th:replace="template :: header"></div>
+
+	<form class="logout_button">
+		<div class="logout">
+			<a href="/logout">ログアウト</a>
+		</div>
+	</form>
+
+	<h3>ログイン失敗</h3>
+
+	<div th:replace="template :: footer"></div>
+</body>
+</html>
