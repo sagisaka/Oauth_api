@@ -39,13 +39,13 @@ public class LoggingFilter implements Filter {
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
 	private boolean firstLoginCheck=true;
-	
+
 	@Autowired
 	private OauthTokenService oauthTokenService;
-	
+
 	@Value("${spring.social.twitter.app-id}")
 	private String appId;
-	
+
 	@Value("${spring.social.twitter.app-secret}")
 	private String appSecret;
 
@@ -63,6 +63,7 @@ public class LoggingFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		logger.info("Before!!");
+		//はじめにログイン状態を確認する
 		List<OauthToken> oauthToken2 = oauthTokenService.checkLogin(true);
 		if(!oauthToken2.isEmpty() && firstLoginCheck){
 			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
@@ -71,7 +72,7 @@ public class LoggingFilter implements Filter {
 			logger.info("ログイン");
 		}
 		firstLoginCheck=false;
-		
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String nextUrl = httpRequest.getRequestURI();
@@ -98,6 +99,7 @@ public class LoggingFilter implements Filter {
 		OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
 		AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
 		OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
+		//tokenをDBに登録する
 		OauthToken token = new OauthToken();
 		token.setAccessToken(accessToken.getValue());
 		token.setAccessVerifier(accessToken.getSecret());
@@ -105,6 +107,7 @@ public class LoggingFilter implements Filter {
 		token.setCheckLogin(true);
 		List<OauthToken> oauthTokenAll = oauthTokenService.findAll();
 		List<OauthToken> oauthTokens = oauthTokenService.find(accessToken.getValue());
+		//DBによって処理変更
 		if(oauthTokenAll.isEmpty() || oauthTokens.isEmpty()){
 			oauthTokenService.create(token);
 		}else{

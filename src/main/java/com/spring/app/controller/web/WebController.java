@@ -27,11 +27,11 @@ public class WebController {
 
 	@Autowired
 	private OauthTokenService oauthTokenService;
-	
+
 	private Twitter twitter;
 
 	private ConnectionRepository connectionRepository;
-	
+
 	@Inject
 	public WebController(Twitter twitter, ConnectionRepository connectionRepository) {
 		this.twitter = twitter;
@@ -45,8 +45,8 @@ public class WebController {
 		List<OauthToken> oauthToken = oauthTokenService.checkLogin(true);
 		model.addAttribute(twitter.userOperations().getUserProfile());
 		model.addAttribute("friends", friends);
-		model.addAttribute("tweets",tweets);	
-		model.addAttribute("token",oauthToken);
+		model.addAttribute("tweets",tweets);
+		model.addAttribute("token",oauthToken.get(0));
 		return "twitterProfile";
 	}
 
@@ -54,7 +54,9 @@ public class WebController {
 	public String logout() {
 		connectionRepository.removeConnections("twitter");
 		List<OauthToken> oauthToken = oauthTokenService.checkLogin(true);
-		oauthTokenService.updateCheck(oauthToken.get(0),false);
+		oauthToken.forEach(logoutToken -> {
+			oauthTokenService.updateCheck(logoutToken,false);
+		});
 		return "logout";
 	}
 
