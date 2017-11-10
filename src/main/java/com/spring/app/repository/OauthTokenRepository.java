@@ -9,6 +9,4 @@ import com.spring.app.model.OauthToken;
 public interface OauthTokenRepository
 extends JpaRepository<OauthToken, Integer> {
 	List<OauthToken> findByAccessToken(String find);
-	
-	List<OauthToken> findByCheckLogin(boolean find);
 }

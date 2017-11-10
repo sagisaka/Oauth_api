@@ -13,6 +13,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,8 +39,6 @@ public class LoggingFilter implements Filter {
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
-	private boolean firstLoginCheck=true;
-
 	@Autowired
 	private OauthTokenService oauthTokenService;
 
@@ -63,30 +62,54 @@ public class LoggingFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		logger.info("Before!!");
-		//はじめにログイン状態を確認する
-		List<OauthToken> oauthToken2 = oauthTokenService.checkLogin(true);
-		if(!oauthToken2.isEmpty() && firstLoginCheck){
-			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
-			Connection<Twitter> connection = connectionFactory.createConnection(oauthToken2.get(0).getOAuthToken());
-			connectionRepository.addConnection(connection);
-			logger.info("ログイン");
-		}
-		firstLoginCheck=false;
-
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		Cookie cookies[] =httpRequest.getCookies();
 		String nextUrl = httpRequest.getRequestURI();
-		if (isLoginCheckPage(nextUrl)){
-			httpResponse.sendRedirect("/connect/twitter");
-		}else if(nextUrl.contains("api/") && connectionRepository.findPrimaryConnection(Twitter.class) == null) {
-			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
+		//アクセストークンによりログインをする
+		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null){
+			for (Cookie cookie : cookies ) {
+				if ("accessToken".equals(cookie.getName())) {
+					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
+					if(oauthToken.isEmpty()){
+						httpResponse.sendRedirect("/connect/twitter");
+					}else{
+						cookie = new Cookie("accessToken",oauthToken.get(0).getOAuthToken().getValue());
+						cookie.setMaxAge(60 * 30);
+						cookie.setPath("/");
+						cookie.setSecure(false);
+						httpResponse.addCookie(cookie);
+						TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
+						Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
+						connectionRepository.addConnection(connection);
+						logger.info("ログイン2");
+					}
+				}
+			}
+		}
+		if(nextUrl.contains("api/")) {
+			for (Cookie cookie : cookies ) {
+				if ("accessToken".equals(cookie.getName())) {
+					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
+					if(oauthToken.isEmpty()){
+						httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
+					}
+				}
+			}
 		}
 		if(!StringUtils.isEmpty(request.getParameter("oauth_token"))){
 			String oauthToken = request.getParameter("oauth_token");
 			String oauthVerifier = request.getParameter("oauth_verifier");
 			TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
 			//token認証でtwitterログイン
-			Connection<Twitter> connection = connectionFactory.createConnection(accessToken(oauthToken,oauthVerifier));
+			OAuthToken accessToken = accessToken(oauthToken,oauthVerifier);
+			Connection<Twitter> connection = connectionFactory.createConnection(accessToken);
+			Cookie cookie = new Cookie("accessToken",accessToken.getValue());
+			// Cookieの有効期限は30分
+			cookie.setMaxAge(60 * 30);
+			cookie.setPath("/");
+			cookie.setSecure(false);
+			httpResponse.addCookie(cookie);
 			connectionRepository.addConnection(connection);
 		}
 		chain.doFilter(request, response);
@@ -104,32 +127,12 @@ public class LoggingFilter implements Filter {
 		token.setAccessToken(accessToken.getValue());
 		token.setAccessVerifier(accessToken.getSecret());
 		token.setOAuthToken(accessToken);
-		token.setCheckLogin(true);
-		List<OauthToken> oauthTokenAll = oauthTokenService.findAll();
-		List<OauthToken> oauthTokens = oauthTokenService.find(accessToken.getValue());
+		List<OauthToken> oauthTokens = oauthTokenService.findByAccessToken(accessToken.getValue());
 		//DBによって処理変更
-		if(oauthTokenAll.isEmpty() || oauthTokens.isEmpty()){
+		if(oauthTokens.isEmpty()){
 			oauthTokenService.create(token);
-		}else{
-			oauthTokenService.updateCheck(oauthTokens.get(0),true);
 		}
 		return accessToken;
-	}
-
-	private boolean isLoginCheckPath(String requestUri) {
-		if(requestUri.contains("js/") || requestUri.contains("api/") || requestUri.contains("css/") || requestUri.contains("image/")){
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isLoginCheckPage(String nextUrl){
-		if (!(isLoginCheckPath(nextUrl))
-				&& connectionRepository.findPrimaryConnection(Twitter.class) == null
-				&& !("/connect/twitter".equals(nextUrl))){
-			return true;
-		}
-		return false;
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class OauthTokenService {
 		return repository.save(oauthToken);
 	}
 
-	public List<OauthToken> find(String accessToken) {
+	public List<OauthToken> findByAccessToken(String accessToken) {
 		return repository.findByAccessToken(accessToken);
 	}	
 
@@ -40,14 +40,6 @@ public class OauthTokenService {
 		oauthToken.setAccessToken(anotherOauthToken.getAccessToken());
 		oauthToken.setAccessVerifier(anotherOauthToken.getAccessVerifier());
 		oauthToken.setOAuthToken(anotherOauthToken.getOAuthToken());
-		oauthToken.setCheckLogin(true);
 		return repository.save(oauthToken);
 	}
-	public OauthToken updateCheck(OauthToken oauthToken,Boolean check) {
-		oauthToken.setCheckLogin(check);
-		return repository.save(oauthToken);
-	}
-	public List<OauthToken> checkLogin(Boolean check) {
-		return repository.findByCheckLogin(check);
-	} 
 }

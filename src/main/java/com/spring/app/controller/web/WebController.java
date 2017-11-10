@@ -3,6 +3,8 @@ package com.spring.app.controller.web;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.connect.ConnectionRepository;
@@ -15,18 +17,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.spring.app.model.OauthToken;
 import com.spring.app.model.Product;
-import com.spring.app.service.OauthTokenService;
 import com.spring.app.service.ProductsService;
 
 @Controller
 public class WebController {
 	@Autowired
 	private ProductsService productsService;
-
-	@Autowired
-	private OauthTokenService oauthTokenService;
 
 	private Twitter twitter;
 
@@ -39,27 +36,18 @@ public class WebController {
 	}
 
 	@GetMapping("/twitter")
-	public String twitter(Model model) {		
+	public String twitter(Model model,HttpServletRequest httpRequest,HttpServletResponse httpResponse) {
 		CursoredList<TwitterProfile> friends = twitter.friendOperations().getFriends();
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
-		List<OauthToken> oauthToken = oauthTokenService.checkLogin(true);
-		if(tweets == null || oauthToken == null){
-			return "nullTwitterProfile";
-		}
 		model.addAttribute(twitter.userOperations().getUserProfile());
 		model.addAttribute("friends", friends);
 		model.addAttribute("tweets",tweets);
-		model.addAttribute("token",oauthToken.get(0));
 		return "twitterProfile";
 	}
 
 	@GetMapping("/logout")
 	public String logout() {
 		connectionRepository.removeConnections("twitter");
-		List<OauthToken> oauthToken = oauthTokenService.checkLogin(true);
-		oauthToken.forEach(logoutToken -> {
-			oauthTokenService.updateCheck(logoutToken,false);
-		});
 		return "logout";
 	}
 
