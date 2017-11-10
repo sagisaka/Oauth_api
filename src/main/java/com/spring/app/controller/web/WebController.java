@@ -1,5 +1,6 @@
 package com.spring.app.controller.web;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,7 +37,10 @@ public class WebController {
 	}
 
 	@GetMapping("/twitter")
-	public String twitter(Model model,HttpServletRequest httpRequest,HttpServletResponse httpResponse) {
+	public String twitter(Model model,HttpServletRequest httpRequest,HttpServletResponse httpResponse) throws IOException {
+		if(connectionRepository.findPrimaryConnection(Twitter.class) == null){
+			httpResponse.sendRedirect("/connect/twitter");
+		}
 		CursoredList<TwitterProfile> friends = twitter.friendOperations().getFriends();
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
 		model.addAttribute(twitter.userOperations().getUserProfile());

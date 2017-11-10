@@ -69,21 +69,17 @@ public class LoggingFilter implements Filter {
 		//アクセストークンによりログインをする
 		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null){
 			for (Cookie cookie : cookies ) {
-				if ("accessToken".equals(cookie.getName())) {
-					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
-					if(oauthToken.isEmpty()){
-						httpResponse.sendRedirect("/connect/twitter");
-					}else{
-						cookie = new Cookie("accessToken",oauthToken.get(0).getOAuthToken().getValue());
-						cookie.setMaxAge(60 * 30);
-						cookie.setPath("/");
-						cookie.setSecure(false);
-						httpResponse.addCookie(cookie);
-						TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
-						Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
-						connectionRepository.addConnection(connection);
-						logger.info("ログイン2");
-					}
+				List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
+				if(!oauthToken.isEmpty()){
+					cookie = new Cookie("accessToken",oauthToken.get(0).getOAuthToken().getValue());
+					cookie.setMaxAge(60 * 30);
+					cookie.setPath("/");
+					cookie.setSecure(false);
+					httpResponse.addCookie(cookie);
+					TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
+					Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
+					connectionRepository.addConnection(connection);
+					logger.info("ログイン");
 				}
 			}
 		}
