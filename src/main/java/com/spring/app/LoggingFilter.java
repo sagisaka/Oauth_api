@@ -69,28 +69,31 @@ public class LoggingFilter implements Filter {
 		//アクセストークンによりログインをする
 		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null){
 			for (Cookie cookie : cookies ) {
-				List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
-				if(!oauthToken.isEmpty()){
-					cookie = new Cookie("accessToken",oauthToken.get(0).getOAuthToken().getValue());
-					cookie.setMaxAge(60 * 30);
-					cookie.setPath("/");
-					cookie.setSecure(false);
-					httpResponse.addCookie(cookie);
-					TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
-					Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
-					connectionRepository.addConnection(connection);
-					logger.info("ログイン");
+				if ("accessToken".equals(cookie.getName())) {
+					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
+					if(!oauthToken.isEmpty()){
+						cookie = this.cookieCreate(oauthToken.get(0).getOAuthToken().getValue());
+						httpResponse.addCookie(cookie);
+						TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
+						Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
+						connectionRepository.addConnection(connection);
+						logger.info("ログイン");
+					}
 				}
 			}
 		}
 		if(nextUrl.contains("api/")) {
+			boolean checkCookie = true;
 			for (Cookie cookie : cookies ) {
 				if ("accessToken".equals(cookie.getName())) {
 					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
-					if(oauthToken.isEmpty()){
-						httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
+					if(!oauthToken.isEmpty()){
+						checkCookie=false;
 					}
 				}
+			}
+			if(checkCookie){
+				httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
 			}
 		}
 		if(!StringUtils.isEmpty(request.getParameter("oauth_token"))){
@@ -100,11 +103,7 @@ public class LoggingFilter implements Filter {
 			//token認証でtwitterログイン
 			OAuthToken accessToken = accessToken(oauthToken,oauthVerifier);
 			Connection<Twitter> connection = connectionFactory.createConnection(accessToken);
-			Cookie cookie = new Cookie("accessToken",accessToken.getValue());
-			// Cookieの有効期限は30分
-			cookie.setMaxAge(60 * 30);
-			cookie.setPath("/");
-			cookie.setSecure(false);
+			Cookie cookie = this.cookieCreate(accessToken.getValue());
 			httpResponse.addCookie(cookie);
 			connectionRepository.addConnection(connection);
 		}
@@ -129,6 +128,14 @@ public class LoggingFilter implements Filter {
 			oauthTokenService.create(token);
 		}
 		return accessToken;
+	}
+
+	public Cookie cookieCreate(String token){
+		Cookie cookie = new Cookie("accessToken",token);
+		cookie.setMaxAge(60 * 30);
+		cookie.setPath("/");
+		cookie.setSecure(false);
+		return cookie;
 	}
 
 	@Override
