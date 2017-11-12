@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/cookie")
 public class CookieRestController {
+
 	@GetMapping(value="{delete}")
 	public String CookieDelete(HttpServletRequest httpRequest,HttpServletResponse httpResponse) throws IOException{
 		Cookie cookies[] = httpRequest.getCookies();
