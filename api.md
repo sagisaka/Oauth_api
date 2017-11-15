@@ -7,7 +7,6 @@
 |商品一件削除|DELETE|/api/product/{id}|
 |商品全件取得|GET|/api/product/|
 |商品取得|POST|/api/product/sam|
-|cookie削除|GET|/api/cookie/delete|
 
 {id}の中身はInteger型のみを受け付ける
 
