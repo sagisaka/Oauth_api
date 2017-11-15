@@ -42,6 +42,7 @@ public class ProductsService {
 		product.setIntroduction(anotherProduct.getIntroduction());
 		product.setPrice(anotherProduct.getPrice());
 		product.setImageUrl(fileName);
+		product.setAuthor(anotherProduct.getAuthor());
 		return repository.save(product);
 	}
 

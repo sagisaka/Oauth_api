@@ -1,9 +1,11 @@
-$(document).ready(function() {
-	$("#create").click(function(){
-		create();
-	});
-});
-function create(){
+//$(document).ready(function() {
+//	var author = /*[[${author}]]*/ 'agagaag';
+//	console.log(author);
+//	$("#create").click(function(){
+//		create();
+//	});
+//});
+function create(author){
 	var button = $(this);
 	button.attr("disabled", true);
 	//処理に不足があるか
@@ -22,6 +24,9 @@ function create(){
 	}else if($("#file").val().length==0){
 		alert('fileを選択してください');
 		return;
+	}else if(author==null){
+		alert('作者がいません');
+		return;
 	}
 	$.getScript("js/escape.js", function(){
 		name = escape_html($("#name").val());
@@ -31,6 +36,7 @@ function create(){
 		formData.append("name",name);
 		formData.append("introduction",introduction);
 		formData.append("price",price);
+		formData.append("author",author);
 		$.ajax({
 			url:'/api/product/',
 			method:'post',

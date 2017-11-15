@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +19,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.spring.app.model.OauthToken;
 import com.spring.app.model.Product;
+import com.spring.app.service.OauthTokenService;
 import com.spring.app.service.ProductsService;
 
 @Controller
@@ -30,6 +33,9 @@ public class WebController {
 
 	private ConnectionRepository connectionRepository;
 
+	@Autowired
+	private OauthTokenService oauthTokenService;
+	
 	@Inject
 	public WebController(Twitter twitter, ConnectionRepository connectionRepository) {
 		this.twitter = twitter;
@@ -43,7 +49,7 @@ public class WebController {
 		}
 		CursoredList<TwitterProfile> friends = twitter.friendOperations().getFriends();
 		List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline();
-		model.addAttribute(twitter.userOperations().getUserProfile());
+		model.addAttribute("twitter",twitter.userOperations().getUserProfile().getName());
 		model.addAttribute("friends", friends);
 		model.addAttribute("tweets",tweets);
 		return "twitterProfile";
@@ -61,7 +67,7 @@ public class WebController {
 	}
 
 	@GetMapping(value="/{id}")
-	public String detail(@PathVariable("id") String id, Model model) {
+	public String detail(@PathVariable("id") String id, Model model,HttpServletRequest httpRequest) {
 		try {
 			Product product = productsService.findOne(Integer.parseInt(id));
 			if(product == null){
@@ -71,6 +77,15 @@ public class WebController {
 			model.addAttribute("introduction",product.getIntroduction());
 			model.addAttribute("price",product.getPrice()+"円");
 			model.addAttribute("data",productsService.findOne(Integer.parseInt(id)));
+			Cookie cookies[] =httpRequest.getCookies();
+			if(cookies !=null){
+				for (Cookie cookie : cookies ) {
+					if ("accessToken".equals(cookie.getName())) {
+						List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
+						model.addAttribute("author",oauthToken.get(0).getAuthor());
+					}
+				}
+			}
 			return "detail";
 		} catch (NumberFormatException e) {
 			return "nullDetail";
@@ -78,7 +93,16 @@ public class WebController {
 	}
 
 	@GetMapping(value="/create")
-	public String create() {
+	public String create(HttpServletRequest httpRequest,Model model) {
+		Cookie cookies[] =httpRequest.getCookies();
+		if(cookies !=null){
+			for (Cookie cookie : cookies ) {
+				if ("accessToken".equals(cookie.getName())) {
+					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
+					model.addAttribute("author",oauthToken.get(0).getAuthor());
+				}
+			}
+		}
 		return "create";
 	}
 }

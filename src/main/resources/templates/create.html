@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8" />
-	<title>作成ページ</title>
-	<script type="text/javascript"
+<meta charset="UTF-8" />
+<title>作成ページ</title>
+<script type="text/javascript"
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"
 	th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js}"></script>
-	<script src="/js/createData.js"></script>
-	<script src="/js/image.js"></script>
-	<link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
-	<link href="css/form.css" th:href="@{css/form.css}" rel="stylesheet"></link>
+
+<script src="/js/createData.js"></script>
+
+<script type="text/javascript" th:inline="javascript">
+$(document).ready(function() {
+	var author = /*[[${author}]]*/;
+	$("#create").click(function(){
+		create(author);
+	});
+});
+</script>
+
+<script src="/js/image.js"></script>
+<link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
+<link href="css/form.css" th:href="@{css/form.css}" rel="stylesheet"></link>
 </head>
 <body>
+
+	<p th:text="${author}"></p>
+
 	<div th:replace="template :: header"></div>
 	<div class="create_page">
 		<span class="box-title">商品の紹介</span>
@@ -19,12 +33,12 @@
 			<label class="name-label" for="name">商品の名前</label>
 			<div class="create_name">
 				<textarea rows="2" cols="50" maxlength='100' id="name"
-				placeholder='商品の名前を入力してください'></textarea>
+					placeholder='商品の名前を入力してください'></textarea>
 			</div>
 			<label class="introduction-label" for="name">商品の説明</label>
 			<div class="create_introduction">
 				<textarea rows="10" cols="50" maxlength='500' id="introduction"
-				placeholder='商品の説明を入力してください'></textarea>
+					placeholder='商品の説明を入力してください'></textarea>
 			</div>
 			<label class="price-label" for="name">商品の価格</label>
 			<div class="create_price">

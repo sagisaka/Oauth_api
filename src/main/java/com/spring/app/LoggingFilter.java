@@ -36,6 +36,8 @@ import com.spring.app.service.OauthTokenService;
 public class LoggingFilter implements Filter {
 
 	private ConnectionRepository connectionRepository;
+	
+	private Twitter twitter;
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
@@ -49,8 +51,9 @@ public class LoggingFilter implements Filter {
 	private String appSecret;
 
 	@Inject
-	public LoggingFilter(ConnectionRepository connectionRepository) {
+	public LoggingFilter(ConnectionRepository connectionRepository,Twitter twitter) {
 		this.connectionRepository = connectionRepository;
+		this.twitter = twitter;
 	}
 
 	@Override
@@ -108,6 +111,17 @@ public class LoggingFilter implements Filter {
 			Cookie cookie = this.cookieCreate(accessToken.getValue());
 			httpResponse.addCookie(cookie);
 			connectionRepository.addConnection(connection);
+			//tokenをDBに登録する
+			OauthToken token = new OauthToken();
+			token.setAccessToken(accessToken.getValue());
+			token.setAccessVerifier(accessToken.getSecret());
+			token.setOAuthToken(accessToken);
+			token.setAuthor(twitter.userOperations().getUserProfile().getName());
+			List<OauthToken> oauthTokens = oauthTokenService.findByAccessToken(accessToken.getValue());
+			//DBによって処理変更
+			if(oauthTokens.isEmpty()){
+				oauthTokenService.create(token);
+			}
 		}
 		chain.doFilter(request, response);
 		logger.info("After!!");
@@ -119,16 +133,6 @@ public class LoggingFilter implements Filter {
 		OAuthToken requestToken = new OAuthToken(oauth_token,oauth_verifier);
 		AuthorizedRequestToken authorizedRequestToken = new AuthorizedRequestToken(requestToken, oauth_verifier);
 		OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
-		//tokenをDBに登録する
-		OauthToken token = new OauthToken();
-		token.setAccessToken(accessToken.getValue());
-		token.setAccessVerifier(accessToken.getSecret());
-		token.setOAuthToken(accessToken);
-		List<OauthToken> oauthTokens = oauthTokenService.findByAccessToken(accessToken.getValue());
-		//DBによって処理変更
-		if(oauthTokens.isEmpty()){
-			oauthTokenService.create(token);
-		}
 		return accessToken;
 	}
 

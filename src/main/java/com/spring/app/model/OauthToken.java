@@ -27,4 +27,6 @@ public class OauthToken {
 	private String accessVerifier;
 
 	private OAuthToken oAuthToken;
+	
+	private String author;
 }

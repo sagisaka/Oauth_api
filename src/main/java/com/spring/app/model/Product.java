@@ -24,7 +24,7 @@ public class Product {
 	@Id
 	@GeneratedValue
 	private Integer id;
-
+	
 	@Column(nullable=false)
 	@NotBlank(message = "文字を入力してください")
 	@Size(max=100,message = "名前を100字以下にしてください")
@@ -41,4 +41,7 @@ public class Product {
 	private String price;
 
 	private String imageUrl;
+	
+	private String author;
+
 }

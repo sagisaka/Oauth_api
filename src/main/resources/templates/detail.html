@@ -8,6 +8,18 @@
 	th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js}"></script>
 <script src="/js/ditailData.js"></script>
 <script src="/js/image.js"></script>
+<script type="text/javascript" th:inline="javascript">
+
+$(document).ready(function() {
+	var author = /*[[${author}]]*/;
+	$("#delete").click(function(){
+		deleteData();
+	});
+	$("#upload").click(function(){
+		updata(author);
+	});
+});
+</script>
 <link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
 <link href="css/table.css" th:href="@{css/table.css}" rel="stylesheet"></link>
 <link href="css/form.css" th:href="@{css/form.css}" rel="stylesheet"></link>
@@ -21,13 +33,15 @@
 				<th scope="col">商品ID</th>
 				<th scope="col">タイトル</th>
 				<th scope="col">商品価格</th>
+				<th scope="col">作者</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="entity : ${data}">
 				<td id="s" th:text="${entity.id}"></td>
 				<td th:text="${entity.name}"></td>
-				<td th:text="${price}"></td>
+				<td th:text="${entity.price}"></td>
+				<td th:text="${entity.author}"></td>
 			</tr>
 		</tbody>
 	</table>

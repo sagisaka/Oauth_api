@@ -1,12 +1,12 @@
-$(document).ready(function() {
-	$("#delete").click(function(){
-		deleteData();
-	});
-	$("#upload").click(function(){
-		updata();
-	});
-});
-function updata() {
+//$(document).ready(function() {
+//	$("#delete").click(function(){
+//		deleteData();
+//	});
+//	$("#upload").click(function(){
+//		updata();
+//	});
+//});
+function updata(author) {
 	var button = $(this);
 	button.attr("disabled", true);
 	//処理に不足があるか
@@ -25,6 +25,9 @@ function updata() {
 	}else if($("#file").val().length==0){
 		alert('fileを選択してください');
 		return;
+	}else if(author==null){
+		alert('作者がいません');
+		return;
 	}
 	// 各フィールドから値を取得してJSONデータを作成
 	$.getScript("js/escape.js", function(){
@@ -35,6 +38,7 @@ function updata() {
 		formData.append("name",name);
 		formData.append("introduction",introduction);
 		formData.append("price",price);
+		formData.append("author",author);
 		// 通信実行
 		$.ajax({
 			type:"POST",
