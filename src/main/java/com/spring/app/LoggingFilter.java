@@ -67,7 +67,7 @@ public class LoggingFilter implements Filter {
 		Cookie cookies[] =httpRequest.getCookies();
 		String nextUrl = httpRequest.getRequestURI();
 		//アクセストークンによりログインをする
-		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null){
+		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null && cookies !=null){
 			for (Cookie cookie : cookies ) {
 				if ("accessToken".equals(cookie.getName())) {
 					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
@@ -84,11 +84,13 @@ public class LoggingFilter implements Filter {
 		}
 		if(nextUrl.contains("api/")) {
 			boolean checkCookie = true;
-			for (Cookie cookie : cookies ) {
-				if ("accessToken".equals(cookie.getName())) {
-					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
-					if(!oauthToken.isEmpty()){
-						checkCookie=false;
+			if(cookies !=null){
+				for (Cookie cookie : cookies ) {
+					if ("accessToken".equals(cookie.getName())) {
+						List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
+						if(!oauthToken.isEmpty()){
+							checkCookie=false;
+						}
 					}
 				}
 			}
