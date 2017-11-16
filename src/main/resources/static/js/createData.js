@@ -1,11 +1,9 @@
-//$(document).ready(function() {
-//	var author = /*[[${author}]]*/ 'agagaag';
-//	console.log(author);
-//	$("#create").click(function(){
-//		create();
-//	});
-//});
-function create(author){
+$(document).ready(function() {
+	$("#create").click(function(){
+		create();
+	});
+});
+function create(){
 	var button = $(this);
 	button.attr("disabled", true);
 	//処理に不足があるか
@@ -24,7 +22,7 @@ function create(author){
 	}else if($("#file").val().length==0){
 		alert('fileを選択してください');
 		return;
-	}else if(author==null){
+	}else if($("#author").val().length==0){
 		alert('作者がいません');
 		return;
 	}
@@ -32,6 +30,7 @@ function create(author){
 		name = escape_html($("#name").val());
 		introduction = escape_html($("#introduction").val());
 		price = escape_html($("#price").val());
+		author = escape_html($("#author").val());
 		var formData = new FormData($('#form').get()[0]);
 		formData.append("name",name);
 		formData.append("introduction",introduction);

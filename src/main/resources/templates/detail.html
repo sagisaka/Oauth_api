@@ -8,17 +8,6 @@
 	th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js}"></script>
 <script src="/js/ditailData.js"></script>
 <script src="/js/image.js"></script>
-<script type="text/javascript" th:inline="javascript">
-$(document).ready(function() {
-	var author = /*[[${author}]]*/;
-	$("#delete").click(function(){
-		deleteData();
-	});
-	$("#upload").click(function(){
-		updata(author);
-	});
-});
-</script>
 <link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
 <link href="css/table.css" th:href="@{css/table.css}" rel="stylesheet"></link>
 <link href="css/form.css" th:href="@{css/form.css}" rel="stylesheet"></link>
@@ -78,9 +67,9 @@ $(document).ready(function() {
 				<input type="button" id="upload" value="アップロード" />
 			</div>
 		</form>
+		<input type="hidden" id="author" th:value="${author}" />
 	</div>
 	<div class="delete">
-		<input type="button" id="delete" value="データの消去" />
 	</div>
 	<div th:replace="template :: footer"></div>
 </body>

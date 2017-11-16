@@ -1,12 +1,12 @@
-//$(document).ready(function() {
-//	$("#delete").click(function(){
-//		deleteData();
-//	});
-//	$("#upload").click(function(){
-//		updata();
-//	});
-//});
-function updata(author) {
+$(document).ready(function() {
+	$("#delete").click(function(){
+		deleteData();
+	});
+	$("#upload").click(function(){
+		updata();
+	});
+});
+function updata() {
 	var button = $(this);
 	button.attr("disabled", true);
 	//処理に不足があるか
@@ -25,7 +25,7 @@ function updata(author) {
 	}else if($("#file").val().length==0){
 		alert('fileを選択してください');
 		return;
-	}else if(author==null){
+	}else if($("#author").val().length==0){
 		alert('作者がいません');
 		return;
 	}
@@ -34,6 +34,7 @@ function updata(author) {
 		name = escape_html($("#name").val());
 		introduction = escape_html($("#introduction").val());
 		price = escape_html($("#price").val());
+		author = escape_html($("#author").val());
 		var formData = new FormData($('#form').get()[0]);
 		formData.append("name",name);
 		formData.append("introduction",introduction);

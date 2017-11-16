@@ -6,18 +6,7 @@
 <script type="text/javascript"
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"
 	th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js}"></script>
-
 <script src="/js/createData.js"></script>
-
-<script type="text/javascript" th:inline="javascript">
-$(document).ready(function() {
-	var author = /*[[${author}]]*/;
-	$("#create").click(function(){
-		create(author);
-	});
-});
-</script>
-
 <script src="/js/image.js"></script>
 <link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
 <link href="css/form.css" th:href="@{css/form.css}" rel="stylesheet"></link>
@@ -50,6 +39,7 @@ $(document).ready(function() {
 				<input type="button" id="create" value="アップロード" />
 			</div>
 		</form>
+		<input type="hidden" id="author" th:value="${author}" />
 	</div>
 	<div th:replace="template :: footer"></div>
 </body>
