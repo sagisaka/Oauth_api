@@ -16,8 +16,8 @@ Twitterアカウントでログイン後アクセストークンを取得する�
 取得したアクセストークンをヘッダ情報に乗せて送信する。
 そのアクセストークンが有効であればapiの利用が可能になる。
 例)
-商品の全件取得には以下のコマンドを入力することで利用可能になる
-curl -D - -s -u client:secret http://localhost:8080/api/product -H "Authorization:accessToken"
+商品の全件取得には以下のコマンドを入力することで利用可能になる<br>
+curl -D - -s -u client:secret http://localhost:8080/api/product -H "Authorization:accessToken"<br>
 accessTokenには取得したアクセストークンを入力する。
 アクセストークンの有効期限は3分となっている。
 
