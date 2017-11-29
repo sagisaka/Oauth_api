@@ -1,7 +1,11 @@
 package com.spring.app;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +17,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,7 +39,7 @@ import com.spring.app.service.OauthTokenService;
 public class LoggingFilter implements Filter {
 
 	private ConnectionRepository connectionRepository;
-	
+
 	private Twitter twitter;
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
@@ -67,16 +70,16 @@ public class LoggingFilter implements Filter {
 		logger.info("Before!!");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		Cookie cookies[] =httpRequest.getCookies();
 		String nextUrl = httpRequest.getRequestURI();
-		//アクセストークンによりログインをする
-		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null && cookies !=null){
-			for (Cookie cookie : cookies ) {
-				if ("accessToken".equals(cookie.getName())) {
-					List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
-					if(!oauthToken.isEmpty()){
-						cookie = this.cookieCreate(oauthToken.get(0).getOAuthToken().getValue());
-						httpResponse.addCookie(cookie);
+		//	アクセストークンによりログインをする
+		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null){
+			Enumeration<String> headerNames = httpRequest.getHeaderNames();
+			while (headerNames.hasMoreElements()){
+				String name = (String)headerNames.nextElement();
+				String headerValue = httpRequest.getHeader(name);
+				List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
+				if(!oauthToken.isEmpty()){
+					if (this.isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
 						TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
 						Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
 						connectionRepository.addConnection(connection);
@@ -85,22 +88,13 @@ public class LoggingFilter implements Filter {
 				}
 			}
 		}
+		//アクセストークン認証
 		if(nextUrl.contains("api/")) {
-			boolean checkCookie = true;
-			if(cookies !=null){
-				for (Cookie cookie : cookies ) {
-					if ("accessToken".equals(cookie.getName())) {
-						List<OauthToken> oauthToken = oauthTokenService.findByAccessToken(cookie.getValue());
-						if(!oauthToken.isEmpty()){
-							checkCookie=false;
-						}
-					}
-				}
-			}
-			if(checkCookie){
+			if(!this.apiValidation(httpRequest)){
 				httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
 			}
 		}
+		//oauthTokenをDBに格納
 		if(!StringUtils.isEmpty(request.getParameter("oauth_token"))){
 			String oauthToken = request.getParameter("oauth_token");
 			String oauthVerifier = request.getParameter("oauth_verifier");
@@ -108,8 +102,6 @@ public class LoggingFilter implements Filter {
 			//token認証でtwitterログイン
 			OAuthToken accessToken = accessToken(oauthToken,oauthVerifier);
 			Connection<Twitter> connection = connectionFactory.createConnection(accessToken);
-			Cookie cookie = this.cookieCreate(accessToken.getValue());
-			httpResponse.addCookie(cookie);
 			connectionRepository.addConnection(connection);
 			//tokenをDBに登録する
 			OauthToken token = new OauthToken();
@@ -117,11 +109,18 @@ public class LoggingFilter implements Filter {
 			token.setAccessVerifier(accessToken.getSecret());
 			token.setOAuthToken(accessToken);
 			token.setAuthor(twitter.userOperations().getUserProfile().getName());
-			List<OauthToken> oauthTokens = oauthTokenService.findByAccessToken(accessToken.getValue());
-			//DBによって処理変更
-			if(oauthTokens.isEmpty()){
-				oauthTokenService.create(token);
-			}
+			//現在時刻を表示
+			Date date = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			// 日時を加算する
+			calendar.add(Calendar.MINUTE, 3);
+			token.setTokenExpiration(calendar);
+			String apiAccessToken = UUID.randomUUID().toString();
+			token.setApiAccessToken(apiAccessToken);
+			//apiAccessTokenを出力
+			logger.info(apiAccessToken);
+			oauthTokenService.create(token);
 		}
 		chain.doFilter(request, response);
 		logger.info("After!!");
@@ -135,13 +134,24 @@ public class LoggingFilter implements Filter {
 		OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
 		return accessToken;
 	}
-
-	public Cookie cookieCreate(String token){
-		Cookie cookie = new Cookie("accessToken",token);
-		cookie.setMaxAge(60 * 30);
-		cookie.setPath("/");
-		cookie.setSecure(false);
-		return cookie;
+	public boolean apiValidation(HttpServletRequest httpRequest){
+		Enumeration<String> headernames = httpRequest.getHeaderNames();
+		while (headernames.hasMoreElements()){				
+			String name = (String)headernames.nextElement();
+			String headerValue = httpRequest.getHeader(name);
+			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
+			if(!oauthToken.isEmpty()){
+				if (isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
+					return true;
+				}
+			}
+		}
+		return false;		
+	}
+	//有効期限チェック
+	public boolean isPeriodValidation(Calendar validationTime) {
+		Calendar culendar = Calendar.getInstance();
+		return culendar.before(validationTime);
 	}
 
 	@Override

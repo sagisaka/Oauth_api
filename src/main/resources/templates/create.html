@@ -13,6 +13,9 @@
 </head>
 <body>
 	<div th:replace="template :: header"></div>
+	<div class="token_create">
+		<textarea rows="2" cols="50" id="token" placeholder='AccessTokenを入力してください'></textarea>
+	</div>
 	<div class="create_page">
 		<span class="box-title">商品の紹介</span>
 		<form id="form" enctype="multipart/form-data">
@@ -34,12 +37,10 @@
 				<input id="file" type="file" name="file" required="required" />
 			</div>
 			<div class="preview"></div>
-
 			<div class="create_upload">
 				<input type="button" id="create" value="アップロード" />
 			</div>
 		</form>
-		<input type="hidden" id="author" th:value="${author}" />
 	</div>
 	<div th:replace="template :: footer"></div>
 </body>

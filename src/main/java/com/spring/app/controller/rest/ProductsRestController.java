@@ -4,7 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -21,7 +24,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.spring.app.model.OauthToken;
 import com.spring.app.model.Product;
+import com.spring.app.service.OauthTokenService;
 import com.spring.app.service.ProductsService;
 
 @RestController
@@ -29,10 +35,12 @@ import com.spring.app.service.ProductsService;
 public class ProductsRestController {
 	@Autowired
 	private ProductsService service;
-	
+	@Autowired
+	private OauthTokenService oauthTokenService;
+
 	// 商品全件取得
 	@GetMapping
-	public List<Product> getproduct(HttpServletResponse response) throws IOException {
+	public List<Product> getProduct(HttpServletResponse response) throws IOException {
 		List<Product> products = service.findAll();
 		if(products.isEmpty()){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
@@ -62,7 +70,7 @@ public class ProductsRestController {
 
 	// 商品一件更新
 	@PostMapping(value="{id:[0-9]+$}")
-	public Product putproduct(@PathVariable Integer id, HttpServletResponse response, @Valid Product anotherProduct, BindingResult result, @RequestParam MultipartFile file) throws IOException {
+	public Product putProduct(HttpServletRequest httpRequest,@PathVariable Integer id, HttpServletResponse response, @Valid Product anotherProduct, BindingResult result, @RequestParam MultipartFile file) throws IOException {
 		if (result.hasErrors()) response.sendError(HttpStatus.BAD_REQUEST.value(),"空文字か値段が文字列です");
 		Product product = service.findOne(id);
 		if(product == null){
@@ -74,12 +82,22 @@ public class ProductsRestController {
 		} catch (IOException e) {
 			response.sendError(HttpStatus.BAD_REQUEST.value(),e.getMessage());
 		}
-		return service.update(product,anotherProduct,file.getOriginalFilename());
+		Enumeration<String> headernames = httpRequest.getHeaderNames();
+		while (headernames.hasMoreElements()){				
+			String name = (String)headernames.nextElement();
+			String headerValue = httpRequest.getHeader(name);
+			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
+			if(!oauthToken.isEmpty()){
+				return service.update(product,anotherProduct,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
+			}
+		}
+		return null;
 	}
+
 
 	// 商品一件削除
 	@DeleteMapping(value="{id:[0-9]+$}")
-	public void deleteproduct(HttpServletResponse response,@PathVariable Integer id) throws IOException {
+	public void deleteProduct(HttpServletResponse response,@PathVariable Integer id) throws IOException {
 		Product product = service.findOne(id);
 		if(product == null){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
@@ -89,7 +107,7 @@ public class ProductsRestController {
 
 	// 商品一件登録
 	@PostMapping
-	public Product handle(HttpServletResponse response, @Valid Product product, BindingResult result, @RequestParam MultipartFile file) throws IOException{
+	public Product handle(HttpServletRequest httpRequest,HttpServletResponse response, @Valid Product product, BindingResult result, @RequestParam MultipartFile file) throws IOException{
 		if (result.hasErrors()) response.sendError(HttpStatus.BAD_REQUEST.value(),"空文字か値段が文字列です");
 		try(BufferedInputStream in = new BufferedInputStream(file.getInputStream());
 				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("src/main/resources/static/image/" + file.getOriginalFilename()))) {
@@ -97,6 +115,16 @@ public class ProductsRestController {
 		} catch (IOException e) {
 			response.sendError(HttpStatus.NOT_FOUND.value(),e.getMessage());
 		}
-		return service.create(product,file.getOriginalFilename());
+		Enumeration<String> headernames = httpRequest.getHeaderNames();
+		while (headernames.hasMoreElements()){				
+			String name = (String)headernames.nextElement();
+			String headerValue = httpRequest.getHeader(name);
+			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
+			if(!oauthToken.isEmpty()){
+				return service.create(product,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
+			}
+		}
+		return null;
 	}
+
 }
