@@ -1,5 +1,7 @@
 package com.spring.app.model;
 
+import java.util.Calendar;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,4 +31,8 @@ public class OauthToken {
 	private OAuthToken oAuthToken;
 	
 	private String author;
+
+	private Calendar tokenExpiration;
+	
+	private String apiAccessToken;
 }

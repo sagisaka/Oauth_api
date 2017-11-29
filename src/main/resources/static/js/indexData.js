@@ -1,28 +1,37 @@
 $(document).ready(function() {
-	allData();
+	$("#allData_get").click(function(){
+		allData();
+	});
 	$("#search_get").click(function(){
 		search();
 	});
 });
 
 function allData(){
-	$.ajax({
-		type: 'GET',
-		url:  '/api/product',
-		success: function(json) {
-			for(var i in json){
-				$("#output").append("<tr> <th scope=row>" + json[i].id + "</th> <td> <img id=img src=/image/"+json[i].imageUrl+"  width=100/> </td> <td> " + json[i].name + "</td> <td>"+ json[i].price + "円 </td> <td> " + json[i].author + "</td> <td><a href="+ json[i].id +">詳細ページへ</a></td> </tr>");
+	$.getScript("js/escape.js", function(){
+		token = escape_html($("#token").val());
+		$.ajax({
+			type: 'GET',
+			url:  '/api/product',
+			headers: {
+				token,
+			},
+			success: function(json) {
+				for(var i in json){
+					$("#output").append("<tr> <th scope=row>" + json[i].id + "</th> <td> <img id=img src=/image/"+json[i].imageUrl+"  width=100/> </td> <td> " + json[i].name + "</td> <td>"+ json[i].price + "円 </td> <td> " + json[i].author + "</td> <td><a href="+ json[i].id +">詳細ページへ</a></td> </tr>");
+				}
+			},
+			error: function() {         // HTTPエラー時
+				alert("商品リストを取得できませんでした");
 			}
-		},
-		error: function() {         // HTTPエラー時
-			alert("商品リストを取得できませんでした");
-		}
+		});
 	});
 }
 function search(){
 	var button = $(this);
 	button.attr("disabled", true);
 	$.getScript("js/escape.js", function(){
+		token = escape_html($("#token").val());
 		name = escape_html($("#name").val());
 		var data = {
 				name: name,
@@ -31,6 +40,9 @@ function search(){
 		$.ajax({
 			type:"post",
 			url:"/api/product/sam",
+			headers: {
+				token,
+			},
 			data:JSON.stringify(data),
 			contentType: 'application/json',
 			success: function(json) {

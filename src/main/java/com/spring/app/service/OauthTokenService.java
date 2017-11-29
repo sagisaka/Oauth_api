@@ -27,6 +27,9 @@ public class OauthTokenService {
 	public List<OauthToken> findByAccessToken(String accessToken) {
 		return repository.findByAccessToken(accessToken);
 	}	
+	public List<OauthToken> findByApiAccessToken(String apiAccessToken) {
+		return repository.findByApiAccessToken(apiAccessToken);
+	}
 
 	public OauthToken findOne(Integer id){
 		return repository.findOne(id);

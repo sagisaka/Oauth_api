@@ -11,7 +11,10 @@
 </head>
 <body>
 	<div th:replace="template :: header"></div>
-	
+	<div class="token_create">
+		<textarea rows="2" cols="50" id="token"
+			placeholder='AccessTokenを入力してください'></textarea>
+	</div>
 	<form class="search">
 		<div>
 			<label class="name-label" for="name">タイトル検索</label>
@@ -24,6 +27,10 @@
 			<input type="button" id="search_get" value="検索" />
 		</div>
 	</form>
+
+	<div class="search_button">
+		<input type="button" id="allData_get" value="全てのデータを取得" />
+	</div>
 	<h1>商品一覧</h1>
 	<table class="type">
 		<thead>

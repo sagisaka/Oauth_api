@@ -31,18 +31,19 @@ public class ProductsService {
 	}
 
 	// 商品一件作成
-	public Product create(Product product,String fileName){
+	public Product create(Product product,String fileName,String author){
 		product.setImageUrl(fileName);
+		product.setAuthor(author);
 		return repository.save(product);
 	}
 
 	// 商品一件更新
-	public Product update(Product product, Product anotherProduct, String fileName) {
+	public Product update(Product product, Product anotherProduct, String fileName,String author) {
 		product.setName(anotherProduct.getName());
 		product.setIntroduction(anotherProduct.getIntroduction());
 		product.setPrice(anotherProduct.getPrice());
 		product.setImageUrl(fileName);
-		product.setAuthor(anotherProduct.getAuthor());
+		product.setAuthor(author);
 		return repository.save(product);
 	}
 
