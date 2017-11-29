@@ -39,7 +39,7 @@ apiを使用でき、また再度Twitterにログインするときはアクセ�
 アクセストークンをヘッダに乗せて行う際は、以下のコマンドを参考にしてください。
 例)
 商品全件取得をするコマンド<br>
-curl -D - -s -u client:secret http://localhost:8080/api/product -H "Authorization:accessToken"<br>
+curl http://localhost:8080/api/product -H "Authorization:アクセストークン"<br>
 Webページ上はアクセストークン入力欄に書き込んでからApiを利用してください。
 
 ### 一覧画面
