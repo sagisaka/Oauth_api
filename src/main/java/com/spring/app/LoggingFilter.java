@@ -79,7 +79,7 @@ public class LoggingFilter implements Filter {
 				String headerValue = httpRequest.getHeader(name);
 				List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
 				if(!oauthToken.isEmpty()){
-					if (isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
+					if (this.isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
 						TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
 						Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
 						connectionRepository.addConnection(connection);
@@ -88,11 +88,13 @@ public class LoggingFilter implements Filter {
 				}
 			}
 		}
+		//アクセストークン認証
 		if(nextUrl.contains("api/")) {
 			if(!this.apiValidation(httpRequest)){
 				httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,"アクセストークンが認証されませんでした");
 			}
 		}
+		//oauthTokenをDBに格納
 		if(!StringUtils.isEmpty(request.getParameter("oauth_token"))){
 			String oauthToken = request.getParameter("oauth_token");
 			String oauthVerifier = request.getParameter("oauth_verifier");
@@ -116,6 +118,7 @@ public class LoggingFilter implements Filter {
 			token.setTokenExpiration(calendar);
 			String apiAccessToken = UUID.randomUUID().toString();
 			token.setApiAccessToken(apiAccessToken);
+			//apiAccessTokenを出力
 			logger.info(apiAccessToken);
 			oauthTokenService.create(token);
 		}
@@ -131,12 +134,7 @@ public class LoggingFilter implements Filter {
 		OAuthToken accessToken= oauthOperations.exchangeForAccessToken(authorizedRequestToken, null);
 		return accessToken;
 	}
-
-	boolean isPeriodValidation(Calendar start) {
-		Calendar cur = Calendar.getInstance();
-		return cur.before(start);
-	}
-	boolean apiValidation(HttpServletRequest httpRequest){
+	public boolean apiValidation(HttpServletRequest httpRequest){
 		Enumeration<String> headernames = httpRequest.getHeaderNames();
 		while (headernames.hasMoreElements()){				
 			String name = (String)headernames.nextElement();
@@ -149,6 +147,11 @@ public class LoggingFilter implements Filter {
 			}
 		}
 		return false;		
+	}
+	//有効期限チェック
+	public boolean isPeriodValidation(Calendar validationTime) {
+		Calendar culendar = Calendar.getInstance();
+		return culendar.before(validationTime);
 	}
 
 	@Override

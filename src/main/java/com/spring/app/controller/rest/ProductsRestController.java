@@ -37,6 +37,7 @@ public class ProductsRestController {
 	private ProductsService service;
 	@Autowired
 	private OauthTokenService oauthTokenService;
+
 	// 商品全件取得
 	@GetMapping
 	public List<Product> getProduct(HttpServletResponse response) throws IOException {
@@ -93,6 +94,7 @@ public class ProductsRestController {
 		return null;
 	}
 
+
 	// 商品一件削除
 	@DeleteMapping(value="{id:[0-9]+$}")
 	public void deleteProduct(HttpServletResponse response,@PathVariable Integer id) throws IOException {
@@ -124,4 +126,5 @@ public class ProductsRestController {
 		}
 		return null;
 	}
+
 }
