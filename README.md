@@ -41,6 +41,8 @@ apiを使用でき、また再度Twitterにログインするときはアクセ�
 商品全件取得をするコマンド<br>
 curl http://localhost:8080/api/product -H "Authorization:アクセストークン"<br>
 Webページ上はアクセストークン入力欄に書き込んでからApiを利用してください。
+アクセストークンの有効期限は3分の設定です。
+
 
 ### 一覧画面
 
