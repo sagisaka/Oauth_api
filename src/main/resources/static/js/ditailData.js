@@ -42,7 +42,7 @@ function updata() {
 			url:"/api/product/"+$("#s").text(),
 			data:formData,
 			headers: {
-				token,
+				'Authorization':token,
 			},
 			processData:false,
 			contentType:false,
@@ -69,7 +69,7 @@ function deleteData() {
 			type:"DELETE",
 			url:"/api/product/"+$("#s").text(),
 			headers: {
-				token,
+				'Authorization':token,
 			},
 			success: function() {
 				document.location = "/";

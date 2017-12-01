@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -82,14 +81,9 @@ public class ProductsRestController {
 		} catch (IOException e) {
 			response.sendError(HttpStatus.BAD_REQUEST.value(),e.getMessage());
 		}
-		Enumeration<String> headernames = httpRequest.getHeaderNames();
-		while (headernames.hasMoreElements()){				
-			String name = (String)headernames.nextElement();
-			String headerValue = httpRequest.getHeader(name);
-			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
-			if(!oauthToken.isEmpty()){
-				return service.update(product,anotherProduct,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
-			}
+		List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
+		if(!oauthToken.isEmpty()){
+			return service.update(product,anotherProduct,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
 		}
 		return null;
 	}
@@ -115,14 +109,9 @@ public class ProductsRestController {
 		} catch (IOException e) {
 			response.sendError(HttpStatus.NOT_FOUND.value(),e.getMessage());
 		}
-		Enumeration<String> headernames = httpRequest.getHeaderNames();
-		while (headernames.hasMoreElements()){				
-			String name = (String)headernames.nextElement();
-			String headerValue = httpRequest.getHeader(name);
-			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
-			if(!oauthToken.isEmpty()){
-				return service.create(product,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
-			}
+		List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
+		if(!oauthToken.isEmpty()){
+			return service.create(product,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
 		}
 		return null;
 	}

@@ -3,7 +3,6 @@ package com.spring.app;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,18 +72,14 @@ public class LoggingFilter implements Filter {
 		String nextUrl = httpRequest.getRequestURI();
 		//	アクセストークンによりログインをする
 		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null){
-			Enumeration<String> headerNames = httpRequest.getHeaderNames();
-			while (headerNames.hasMoreElements()){
-				String name = (String)headerNames.nextElement();
-				String headerValue = httpRequest.getHeader(name);
-				List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
-				if(!oauthToken.isEmpty()){
-					if (this.isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
-						TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
-						Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
-						connectionRepository.addConnection(connection);
-						logger.info("ログイン");
-					}
+			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
+			if(!oauthToken.isEmpty()){
+				if (this.isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
+					TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
+					Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
+					connectionRepository.addConnection(connection);
+					logger.info("ログイン");
+
 				}
 			}
 		}
@@ -135,15 +130,10 @@ public class LoggingFilter implements Filter {
 		return accessToken;
 	}
 	public boolean apiValidation(HttpServletRequest httpRequest){
-		Enumeration<String> headernames = httpRequest.getHeaderNames();
-		while (headernames.hasMoreElements()){				
-			String name = (String)headernames.nextElement();
-			String headerValue = httpRequest.getHeader(name);
-			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(headerValue);
-			if(!oauthToken.isEmpty()){
-				if (isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
-					return true;
-				}
+		List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
+		if(!oauthToken.isEmpty()){
+			if (isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
+				return true;
 			}
 		}
 		return false;		

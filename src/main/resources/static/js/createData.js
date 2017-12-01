@@ -37,7 +37,7 @@ function create(){
 			method:'post',
 			data:formData,
 			headers: {
-				token,
+				'Authorization':token,
 			},
 			processData:false,
 			contentType:false,
