@@ -1,5 +1,6 @@
 package com.spring.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +50,14 @@ public class OauthTokenService {
 		return repository.save(oauthToken);
 	}
 
-	public OauthToken findTokenExpiration() {
+	public List<OauthToken> findTokenExpiration() {
 		List<OauthToken> tokens = repository.findAll();
+		List<OauthToken> expirationToken = new ArrayList<OauthToken>();
 		for(OauthToken token :tokens){
 			if(timeValidater.isPeriodValidation(token.getTokenExpiration())){
-				return token;
+				expirationToken.add(token);
 			}
 		}
-		return null;
+		return expirationToken;
 	}
 }

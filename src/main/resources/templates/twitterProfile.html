@@ -15,8 +15,8 @@
 	</form>
 
 	<h4>有効なアクセストークン</h4>
-	<div th:if="${token}">
-		<li th:text="${token.apiAccessToken}">アクセストークン</li>
+	<div th:if="${tokens}">
+		<li th:each="token:${tokens}" th:text="${token.apiAccessToken}">アクセストークン</li>
 	</div>
 
 	<h3>

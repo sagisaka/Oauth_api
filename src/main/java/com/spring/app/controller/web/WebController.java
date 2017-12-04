@@ -50,7 +50,7 @@ public class WebController {
 		model.addAttribute("twitter",twitter.userOperations().getUserProfile().getName());
 		model.addAttribute("friends", friends);
 		model.addAttribute("tweets",tweets);
-		model.addAttribute("token",oauthTokenService.findTokenExpiration());
+		model.addAttribute("tokens",oauthTokenService.findTokenExpiration());
 		return "twitterProfile";
 	}
 
