@@ -14,6 +14,11 @@
 		</div>
 	</form>
 
+	<h4>有効なアクセストークン</h4>
+	<div th:if="${token}">
+		<li th:text="${token.apiAccessToken}">アクセストークン</li>
+	</div>
+
 	<h3>
 		こんにちは, <span th:text="${twitter}">Some User</span>!
 	</h3>

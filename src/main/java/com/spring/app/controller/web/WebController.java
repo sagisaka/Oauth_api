@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.spring.app.model.Product;
+import com.spring.app.service.OauthTokenService;
 import com.spring.app.service.ProductsService;
 
 @Controller
@@ -29,6 +30,9 @@ public class WebController {
 	private Twitter twitter;
 
 	private ConnectionRepository connectionRepository;
+
+	@Autowired
+	private OauthTokenService oauthTokenService;
 
 	@Inject
 	public WebController(Twitter twitter, ConnectionRepository connectionRepository) {
@@ -46,6 +50,7 @@ public class WebController {
 		model.addAttribute("twitter",twitter.userOperations().getUserProfile().getName());
 		model.addAttribute("friends", friends);
 		model.addAttribute("tweets",tweets);
+		model.addAttribute("token",oauthTokenService.findTokenExpiration());
 		return "twitterProfile";
 	}
 

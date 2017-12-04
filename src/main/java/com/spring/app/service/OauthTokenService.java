@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.spring.app.TimeValidater;
 import com.spring.app.model.OauthToken;
 import com.spring.app.repository.OauthTokenRepository;
 
@@ -15,6 +16,8 @@ public class OauthTokenService {
 
 	@Autowired
 	private OauthTokenRepository repository;
+
+	private TimeValidater timeValidater = new TimeValidater();
 
 	public List<OauthToken> findAll(){
 		return repository.findAll();
@@ -44,5 +47,15 @@ public class OauthTokenService {
 		oauthToken.setAccessVerifier(anotherOauthToken.getAccessVerifier());
 		oauthToken.setOAuthToken(anotherOauthToken.getOAuthToken());
 		return repository.save(oauthToken);
+	}
+
+	public OauthToken findTokenExpiration() {
+		List<OauthToken> tokens = repository.findAll();
+		for(OauthToken token :tokens){
+			if(timeValidater.isPeriodValidation(token.getTokenExpiration())){
+				return token;
+			}
+		}
+		return null;
 	}
 }

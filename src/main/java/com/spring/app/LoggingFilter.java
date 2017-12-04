@@ -43,6 +43,8 @@ public class LoggingFilter implements Filter {
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
+	private TimeValidater timeValidater = new TimeValidater();
+
 	@Autowired
 	private OauthTokenService oauthTokenService;
 
@@ -74,12 +76,11 @@ public class LoggingFilter implements Filter {
 		if("/twitter".equals(nextUrl) && connectionRepository.findPrimaryConnection(Twitter.class) == null){
 			List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
 			if(!oauthToken.isEmpty()){
-				if (this.isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
+				if (timeValidater.isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
 					TwitterConnectionFactory connectionFactory = new TwitterConnectionFactory(appId,appSecret);
 					Connection<Twitter> connection = connectionFactory.createConnection(oauthToken.get(0).getOAuthToken());
 					connectionRepository.addConnection(connection);
 					logger.info("ログイン");
-
 				}
 			}
 		}
@@ -132,16 +133,11 @@ public class LoggingFilter implements Filter {
 	public boolean apiValidation(HttpServletRequest httpRequest){
 		List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
 		if(!oauthToken.isEmpty()){
-			if (isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
+			if (timeValidater.isPeriodValidation(oauthToken.get(0).getTokenExpiration())) {
 				return true;
 			}
 		}
 		return false;		
-	}
-	//有効期限チェック
-	public boolean isPeriodValidation(Calendar validationTime) {
-		Calendar culendar = Calendar.getInstance();
-		return culendar.before(validationTime);
 	}
 
 	@Override
