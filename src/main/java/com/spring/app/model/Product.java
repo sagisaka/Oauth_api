@@ -1,5 +1,7 @@
 package com.spring.app.model;
 
+import java.util.Calendar;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,5 +45,7 @@ public class Product {
 	private String imageUrl;
 
 	private String author;
+	
+	private Calendar createTime;
 
 }

@@ -33,14 +33,14 @@ import com.spring.app.service.ProductsService;
 @RequestMapping("api/product")
 public class ProductsRestController {
 	@Autowired
-	private ProductsService service;
+	private ProductsService productService;
 	@Autowired
 	private OauthTokenService oauthTokenService;
 
 	// 商品全件取得
 	@GetMapping
 	public List<Product> getProduct(HttpServletResponse response) throws IOException {
-		List<Product> products = service.findAll();
+		List<Product> products = productService.findAll();
 		if(products.isEmpty()){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
 		}
@@ -50,7 +50,7 @@ public class ProductsRestController {
 	// 商品一件取得
 	@GetMapping(value="{id:[0-9]+$}")
 	public Product getProduct(@PathVariable Integer id,HttpServletResponse response) throws IOException {
-		Product product = service.findOne(id);
+		Product product = productService.findOne(id);
 		if(product == null){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
 		}
@@ -60,7 +60,7 @@ public class ProductsRestController {
 	//　商品取得
 	@PostMapping(value="/sam")
 	public List<Product> getValueproduct(HttpServletResponse response, @RequestBody Product product) throws IOException {
-		List<Product> products = service.find(product.getName());
+		List<Product> products = productService.find(product.getName());
 		if(products.isEmpty()){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
 		}
@@ -71,7 +71,7 @@ public class ProductsRestController {
 	@PostMapping(value="{id:[0-9]+$}")
 	public Product putProduct(HttpServletRequest httpRequest,@PathVariable Integer id, HttpServletResponse response, @Valid Product anotherProduct, BindingResult result, @RequestParam MultipartFile file) throws IOException {
 		if (result.hasErrors()) response.sendError(HttpStatus.BAD_REQUEST.value(),"空文字か値段が文字列です");
-		Product product = service.findOne(id);
+		Product product = productService.findOne(id);
 		if(product == null){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
 		}
@@ -83,7 +83,7 @@ public class ProductsRestController {
 		}
 		List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
 		if(!oauthToken.isEmpty()){
-			return service.update(product,anotherProduct,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
+			return productService.update(product,anotherProduct,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
 		}
 		return null;
 	}
@@ -92,11 +92,11 @@ public class ProductsRestController {
 	// 商品一件削除
 	@DeleteMapping(value="{id:[0-9]+$}")
 	public void deleteProduct(HttpServletResponse response,@PathVariable Integer id) throws IOException {
-		Product product = service.findOne(id);
+		Product product = productService.findOne(id);
 		if(product == null){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
 		}
-		service.delete(id);
+		productService.delete(id);
 	}
 
 	// 商品一件登録
@@ -111,7 +111,7 @@ public class ProductsRestController {
 		}
 		List<OauthToken> oauthToken = oauthTokenService.findByApiAccessToken(httpRequest.getHeader("Authorization"));
 		if(!oauthToken.isEmpty()){
-			return service.create(product,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
+			return productService.create(product,file.getOriginalFilename(),oauthToken.get(0).getAuthor());
 		}
 		return null;
 	}

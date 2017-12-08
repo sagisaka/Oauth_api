@@ -1,6 +1,8 @@
 package com.spring.app.service;
 
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,10 @@ public class ProductsService {
 	public Product create(Product product,String fileName,String author){
 		product.setImageUrl(fileName);
 		product.setAuthor(author);
+		Date date = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		product.setCreateTime(calendar);
 		return repository.save(product);
 	}
 
@@ -51,4 +57,8 @@ public class ProductsService {
 	public void delete(Integer id) {
 		repository.delete(id);
 	}
+	public Integer findAllSize() {
+		return repository.findAll().size();
+	}
+	
 }

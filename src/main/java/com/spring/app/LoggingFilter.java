@@ -31,8 +31,10 @@ import org.springframework.social.twitter.connect.TwitterConnectionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.spring.app.controller.periodic.JobPeriodical;
 import com.spring.app.model.OauthToken;
 import com.spring.app.service.OauthTokenService;
+import com.spring.app.service.ProductsService;
 
 @Component
 public class LoggingFilter implements Filter {
@@ -45,9 +47,14 @@ public class LoggingFilter implements Filter {
 
 	private TimeValidater timeValidater = new TimeValidater();
 
+	private JobPeriodical jobPeriodical = new JobPeriodical();
+	
 	@Autowired
 	private OauthTokenService oauthTokenService;
 
+	@Autowired
+	private ProductsService productService;
+	
 	@Value("${spring.social.twitter.app-id}")
 	private String appId;
 
@@ -63,8 +70,9 @@ public class LoggingFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		logger.info("init!!");
+		jobPeriodical.oneDayJob(productService);
 	}
-
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
