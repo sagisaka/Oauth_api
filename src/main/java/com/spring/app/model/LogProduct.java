@@ -1,5 +1,6 @@
 package com.spring.app.model;
 
+import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,11 +17,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="product")
+@Table(name="logProduct")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class LogProduct {
 
 	@Id
 	@GeneratedValue
@@ -44,5 +45,11 @@ public class Product {
 	private String imageUrl;
 
 	private String author;
+	
+	private String productApi;
+	
+	private Calendar logTime;
+	
+	private Integer day;
 	
 }

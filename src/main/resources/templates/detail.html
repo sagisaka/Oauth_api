@@ -16,7 +16,8 @@
 <body>
 	<div th:replace="template :: header"></div>
 	<div class="token_create">
-		<textarea rows="2" cols="50" id="token" placeholder='AccessTokenを入力してください'></textarea>
+		<textarea rows="2" cols="50" id="token"
+			placeholder='AccessTokenを入力してください'></textarea>
 	</div>
 	<table class="type">
 		<thead>
@@ -71,6 +72,7 @@
 		</form>
 	</div>
 	<div class="delete">
+		<input type="button" id="delete" value="消去" />
 	</div>
 	<div th:replace="template :: footer"></div>
 </body>
