@@ -1,6 +1,9 @@
 <html>
 <head>
 <title>Hello Twitter</title>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/js/twitterProfile.js"></script>
 <link href="css/style.css" th:href="@{css/style.css}" rel="stylesheet"></link>
 <link href="css/table.css" th:href="@{css/table.css}" rel="stylesheet"></link>
 </head>
@@ -22,6 +25,35 @@
 	<h3>
 		こんにちは, <span th:text="${twitter}">Some User</span>!
 	</h3>
+
+	<form class="search">
+		<div>
+			<label class="name-label" for="name">タイトル検索</label>
+			<div>
+				<textarea rows="2" cols="50" maxlength='100' id="name"
+					placeholder='日時を入力してください'></textarea>
+			</div>
+		</div>
+		<div class="search_button">
+			<input type="button" id="search_get" value="検索" />
+		</div>
+	</form>
+
+	<h1>商品一覧</h1>
+	<table class="type">
+		<thead>
+			<tr>
+				<th scope="col">商品ID</th>
+				<th scope="col">商品画像</th>
+				<th scope="col">タイトル</th>
+				<th scope="col">商品価格</th>
+				<th scope="col">作者</th>
+				<th scope="col">商品へのリンク</th>
+			</tr>
+		</thead>
+		<tbody id="output">
+		</tbody>
+	</table>
 
 	<h4>These are your friends:</h4>
 	<ul>

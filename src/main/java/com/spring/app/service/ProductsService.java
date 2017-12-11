@@ -1,8 +1,6 @@
 package com.spring.app.service;
 
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,32 +13,31 @@ import com.spring.app.repository.ProductsRepository;
 @Transactional
 public class ProductsService {
 	@Autowired
-	private ProductsRepository repository;
+	private ProductsRepository productsRepository;
+	@Autowired
+	private LogProductsService logProductsServise;
 	
 	// 商品全件取得
 	public List<Product> findAll() {
-		return repository.findAll();
+		return productsRepository.findAll();
 	}
 
 	// 商品一件取得
 	public Product findOne(Integer id) {
-		return repository.findOne(id);
+		return productsRepository.findOne(id);
 	}
 
 	//商品の名前検索
 	public List<Product> find(String name) {
-		return repository.findByName(name);
+		return productsRepository.findByName(name);
 	}
 
 	// 商品一件作成
 	public Product create(Product product,String fileName,String author){
 		product.setImageUrl(fileName);
 		product.setAuthor(author);
-		Date date = new Date();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		product.setCreateTime(calendar);
-		return repository.save(product);
+		logProductsServise.createLogProduct(product,"create");
+		return productsRepository.save(product);
 	}
 
 	// 商品一件更新
@@ -50,15 +47,13 @@ public class ProductsService {
 		product.setPrice(anotherProduct.getPrice());
 		product.setImageUrl(fileName);
 		product.setAuthor(author);
-		return repository.save(product);
+		return productsRepository.save(product);
 	}
 
 	// 商品一件削除
 	public void delete(Integer id) {
-		repository.delete(id);
-	}
-	public Integer findAllSize() {
-		return repository.findAll().size();
+		logProductsServise.createLogProduct(this.findOne(id),"delete");
+		productsRepository.delete(id);
 	}
 	
 }

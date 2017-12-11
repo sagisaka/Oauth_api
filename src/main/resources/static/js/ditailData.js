@@ -63,23 +63,25 @@ function updata() {
 function deleteData() {
 	var button = $(this);
 	button.attr("disabled", true);
-	token = escape_html($("#token").val());
-	if(window.confirm('この商品のデータを消しますか？')){
-		$.ajax({
-			type:"DELETE",
-			url:"/api/product/"+$("#s").text(),
-			headers: {
-				'Authorization':token,
-			},
-			success: function() {
-				document.location = "/";
-			},
-			error: function() {         // HTTPエラー時
-				alert("Server Error. Pleasy try again later.");
-			},
-			complete: function() {
-				button.attr("disabled", false);
-			}
-		});
-	}
+	$.getScript("js/escape.js", function(){
+		token = escape_html($("#token").val());
+		if(window.confirm('この商品のデータを消しますか？')){
+			$.ajax({
+				type:"DELETE",
+				url:"/api/product/"+$("#s").text(),
+				headers: {
+					'Authorization':token,
+				},
+				success: function() {
+					document.location = "/";
+				},
+				error: function() {         // HTTPエラー時
+					alert("Server Error. Pleasy try again later.");
+				},
+				complete: function() {
+					button.attr("disabled", false);
+				}
+			});
+		}
+	});
 }

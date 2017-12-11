@@ -12,13 +12,12 @@ import com.spring.app.service.ProductsService;
 public class JobPeriodical {
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
-
 	
 	public void oneDayJob(ProductsService productService){
 		TimerTask task = new TimerTask() {
 			public void run() {
 				if(!productService.findAll().isEmpty()){
-					logger.info(("Time" + productService.findAll().get(0).getCreateTime()));
+					logger.info("Time" );
 				}else{
 					logger.info("no");
 				}
