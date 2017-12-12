@@ -1,5 +1,6 @@
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+<meta charset="UTF-8" />
 <title>Hello Twitter</title>
 <script type="text/javascript"
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -10,6 +11,11 @@
 <body>
 
 	<div th:replace="template :: header"></div>
+
+	<div class="token_create">
+		<textarea rows="2" cols="50" id="token"
+			placeholder='AccessTokenを入力してください'></textarea>
+	</div>
 
 	<form class="logout_button">
 		<div class="logout">
