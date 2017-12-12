@@ -1,5 +1,6 @@
 package com.spring.app.controller.periodic;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,24 +8,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.spring.app.LoggingFilter;
-import com.spring.app.service.ProductsService;
+import com.spring.app.model.LogProduct;
+import com.spring.app.service.LogProductsService;
 
 public class JobPeriodical {
 
 	private Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 	
-	public void oneDayJob(ProductsService productService){
+	//1日一回実行
+	public void oneDayJob(LogProductsService logProductService){
 		TimerTask task = new TimerTask() {
 			public void run() {
-				if(!productService.findAll().isEmpty()){
-					logger.info("Time" );
+				//登録したログデータからアウトプットする
+				List<LogProduct> logProducts = logProductService.findByCheckOutput(false);
+				if(logProducts.isEmpty()){
+					logger.info("Nothing");
 				}else{
-					logger.info("no");
+					logProductService.updateCheckOutput(logProducts);
+					logger.info("Output Data");
 				}
 			}
 		};
 		Timer timer = new Timer();
-		timer.schedule(task, 0, 5000L);
+		//1日
+		timer.schedule(task, 0, 60000*60000*24);
 	}
 
 }

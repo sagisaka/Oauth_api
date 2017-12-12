@@ -2,6 +2,7 @@ package com.spring.app.service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,10 +33,34 @@ public class LogProductsService {
 		logProduct.setName(product.getName());
 		logProduct.setPrice(product.getPrice());
 		logProduct.setProductApi(api);
+		logProduct.setCheckOutput(false);
 		logProductsRepository.save(logProduct);
 	}
-
-	public List<LogProduct> checkByDate(String date) {
+	
+	//日付データの同値判別
+	public List<LogProduct> findByLogDate(String date) {
 		return logProductsRepository.findByLogDate(date);
+	}
+	
+	//アウトプットデータ判別
+	public List<LogProduct> findByCheckOutput(Boolean check) {
+		return logProductsRepository.findByCheckOutput(check);
+	}
+	
+	//アウトプットデータに変更
+	public void updateCheckOutput(List<LogProduct> logProducts) {
+		logProducts.forEach(logProduct->{
+			logProduct.setCheckOutput(true);
+			logProductsRepository.save(logProduct);
+		});
+	} 
+	
+	//アウトプットデータを追加
+	public List<LogProduct> findBycheckOutput(List<LogProduct> products) {
+		List<LogProduct> outputProducts = new ArrayList<LogProduct>();
+		products.forEach(product->{
+			if(product.getCheckOutput()) outputProducts.add(product);
+		});
+		return outputProducts;
 	}	
 }
