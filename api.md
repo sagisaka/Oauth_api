@@ -7,6 +7,7 @@
 |商品一件削除|DELETE|/api/product/{id}|
 |商品全件取得|GET|/api/product/|
 |商品取得|POST|/api/product/sam|
+|api履歴取得|POST|/api/log/|
 
 {id}の中身はInteger型のみを受け付ける
 
@@ -36,6 +37,8 @@ curl http://localhost:8080/api/product -H "Authorization:アクセストーク�
 |introduction|文字列|500|登録したい商品の説明|
 |price|数値||登録したい商品の価格|
 |imageUrl|文字列||登録したい商品画像のURL|
+|author|文字列||idに基づいた作者|
+
 * 処理結果ステータス
 
 |ステータス|説明|
@@ -59,6 +62,8 @@ curl http://localhost:8080/api/product -H "Authorization:アクセストーク�
 |introduction|文字列|500|idに基づいた商品の説明|
 |price|数値||idに基づいた商品の価格(自動的に"円"が付く)|
 |imageUrl|文字列||idに基づいた商品画像のURL|
+|author|文字列||idに基づいた作者|
+
 * 処理結果ステータス
 
 |ステータス|説明|
@@ -77,6 +82,8 @@ curl http://localhost:8080/api/product -H "Authorization:アクセストーク�
 |introduction|文字列|500|idに基づいた商品の説明|
 |price|文字列||idに基づいた商品の価格|
 |imageUrl|文字列||idに基づいた商品画像のURL|
+|author|文字列||idに基づいた作者|
+
 * 処理結果ステータス
 
 |ステータス|説明|
@@ -117,6 +124,7 @@ curl http://localhost:8080/api/product -H "Authorization:アクセストーク�
 |introduction|文字列|500|idに基づいた商品の説明|
 |price|数値||idに基づいた商品の価格(自動的に"円"が付く)|
 |imageUrl|文字列||idに基づいた商品画像のURL|
+|author|文字列||idに基づいた作者|
 
 * 処理結果ステータス
 
@@ -143,6 +151,7 @@ curl http://localhost:8080/api/product -H "Authorization:アクセストーク�
 |introduction|文字列|500|idに基づいた商品の説明|
 |price|数値||idに基づいた商品の価格(自動的に"円"が付く)|
 |imageUrl|文字列||idに基づいた商品画像のURL|
+|author|文字列||idに基づいた作者|
 
 * 処理結果ステータス
 
@@ -152,3 +161,31 @@ curl http://localhost:8080/api/product -H "Authorization:アクセストーク�
 |401|アクセストークンが認証されませんでした|
 |404|該当しなければ"message"にデータが見つかりませんでしたを返却する|
 
+### api履歴取得
+* POSTデータ
+
+|JSON key|型|サイズ|値の説明|
+|---|---|---|---|
+|date|文字列||取得したい履歴の日付|
+
+* 受け取りデータ
+
+|JSON key|型|サイズ|値の説明|
+|---|---|---|---|
+|id|数値||取得した商品のid|
+|name|文字列|100|idに基づいた商品タイトルの名前|
+|introduction|文字列|500|idに基づいた商品の説明|
+|price|数値||idに基づいた商品の価格(自動的に"円"が付く)|
+|imageUrl|文字列||idに基づいた商品画像のURL|
+|author|文字列||idに基づいた作者|
+|productApi|文字列||idに基づいたapi履歴|
+|logDate|文字列||idに基づいた履歴作成日|
+|checkOutput|Boolean||アウトプット可能判定|
+	
+* 処理結果ステータス
+
+|ステータス|説明|
+|---|---|
+|200|取得したいデータを取得する|
+|401|アクセストークンが認証されませんでした|
+|404|該当しなければ"message"にデータが見つかりませんでしたを返却する|
