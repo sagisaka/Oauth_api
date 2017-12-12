@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$("#search_get").click(function(){
+	$("#date_get").click(function(){
 		search();
 	});
 });
@@ -7,9 +7,12 @@ function search(){
 	var button = $(this);
 	button.attr("disabled", true);
 	$.getScript("js/escape.js", function(){
-		day = escape_html($("#name").val());
+		year = escape_html($("#year").val());
+		month = escape_html($("#month").val());
+		day = escape_html($("#day").val());
+		date = year + "-" + month + "-" +day;
 		var data = {
-				day: day,
+				logDate:date,
 		};
 		// 通信実行
 		$.ajax({

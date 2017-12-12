@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.app.model.LogProduct;
-import com.spring.app.model.Product;
 import com.spring.app.service.LogProductsService;
 
 @RestController
@@ -25,14 +24,10 @@ public class LogProductsRestContrller {
 	
 	@PostMapping
 	public List<LogProduct> getProduct(HttpServletResponse response,@RequestBody LogProduct logProduct) throws IOException {
-		System.out.println(logProduct.getDay());
-		List<LogProduct> products = logProductsServise.findByDay(logProduct.getDay());
+		List<LogProduct> products = logProductsServise.checkByDate(logProduct.getLogDate());
 		if(products.isEmpty()){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
 		}
-		System.out.println(products.get(0).getAuthor());
-
 		return products;
 	}
-	
 }

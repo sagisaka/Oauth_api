@@ -26,16 +26,15 @@
 		こんにちは, <span th:text="${twitter}">Some User</span>!
 	</h3>
 
-	<form class="search">
+	<form class="date">
+		<label class="month-label" for="month-date">履歴検索</label>
 		<div>
-			<label class="name-label" for="name">タイトル検索</label>
-			<div>
-				<textarea rows="2" cols="50" maxlength='100' id="name"
-					placeholder='日時を入力してください'></textarea>
-			</div>
+			<textarea rows="1" cols="5" maxlength='4' id="year" placeholder='年'></textarea>
+			<textarea rows="1" cols="5" maxlength='2' id="month" placeholder='月'></textarea>
+			<textarea rows="1" cols="5" maxlength='2' id="day" placeholder='日'></textarea>
 		</div>
 		<div class="search_button">
-			<input type="button" id="search_get" value="検索" />
+			<input type="button" id="date_get" value="検索" />
 		</div>
 	</form>
 

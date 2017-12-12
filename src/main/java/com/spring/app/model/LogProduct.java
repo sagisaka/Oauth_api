@@ -1,7 +1,5 @@
 package com.spring.app.model;
 
-import java.util.Calendar;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,8 +46,6 @@ public class LogProduct {
 	
 	private String productApi;
 	
-	private Calendar logTime;
-	
-	private Integer day;
-	
+	private String logDate;
+
 }

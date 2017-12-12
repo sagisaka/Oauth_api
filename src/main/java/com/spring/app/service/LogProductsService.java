@@ -1,6 +1,7 @@
 package com.spring.app.service;
 
-import java.util.Calendar;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -21,12 +22,11 @@ public class LogProductsService {
 
 	public void createLogProduct(Product product,String api){
 		LogProduct logProduct = new LogProduct();
-		Date date = new Date();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		Date nowDate = new Date();
+		String logDate = df.format(nowDate);
 		logProduct.setAuthor(product.getAuthor());
-		logProduct.setLogTime(calendar);
-		logProduct.setDay(calendar.get(Calendar.DATE));
+		logProduct.setLogDate(logDate);
 		logProduct.setImageUrl(product.getImageUrl());
 		logProduct.setIntroduction(product.getIntroduction());
 		logProduct.setName(product.getName());
@@ -35,7 +35,7 @@ public class LogProductsService {
 		logProductsRepository.save(logProduct);
 	}
 
-	public List<LogProduct> findByDay(Integer day) {
-		return logProductsRepository.findByDay(day);
+	public List<LogProduct> checkByDate(String date) {
+		return logProductsRepository.findByLogDate(date);
 	}	
 }
