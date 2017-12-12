@@ -16,7 +16,7 @@ import com.spring.app.model.LogProduct;
 import com.spring.app.service.LogProductsService;
 
 @RestController
-@RequestMapping("log")
+@RequestMapping("api/log")
 public class LogProductsRestContrller {
 	
 	@Autowired

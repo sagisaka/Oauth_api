@@ -8,6 +8,7 @@ function search(){
 	button.attr("disabled", true);
 	$('#output').empty();
 	$.getScript("js/escape.js", function(){
+		token = escape_html($("#token").val());
 		year = escape_html($("#year").val());
 		month = escape_html($("#month").val());
 		day = escape_html($("#day").val());
@@ -18,7 +19,10 @@ function search(){
 		// 通信実行
 		$.ajax({
 			type:"post",
-			url:"/log",
+			url:"api/log",
+			headers: {
+				'Authorization':token,
+			},
 			data:JSON.stringify(data),
 			contentType: 'application/json',
 			success: function(json) {

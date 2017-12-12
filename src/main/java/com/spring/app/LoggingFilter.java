@@ -119,7 +119,7 @@ public class LoggingFilter implements Filter {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
 			// 日時を加算する
-			calendar.add(Calendar.MINUTE, 300);
+			calendar.add(Calendar.MINUTE, 3);
 			token.setTokenExpiration(calendar);
 			String apiAccessToken = UUID.randomUUID().toString();
 			token.setApiAccessToken(apiAccessToken);
