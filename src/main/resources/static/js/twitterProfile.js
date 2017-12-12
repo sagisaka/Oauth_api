@@ -6,6 +6,7 @@ $(document).ready(function() {
 function search(){
 	var button = $(this);
 	button.attr("disabled", true);
+	$('#output').empty();
 	$.getScript("js/escape.js", function(){
 		year = escape_html($("#year").val());
 		month = escape_html($("#month").val());
@@ -21,7 +22,6 @@ function search(){
 			data:JSON.stringify(data),
 			contentType: 'application/json',
 			success: function(json) {
-				$('#output').empty();
 				for(var i in json){
 					$("#output").append("<tr> <th scope=row>" + json[i].id + "</th> <td> <img id=img src=/image/"+json[i].imageUrl+"  width=100/> </td> <td> " + json[i].name + "</td> <td>"+ json[i].price + "円 </td> <td> " + json[i].author + "</td> <td> "+ json[i].productApi + "</td> </tr>");
 				}

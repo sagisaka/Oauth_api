@@ -33,8 +33,8 @@ import org.springframework.util.StringUtils;
 
 import com.spring.app.controller.periodic.JobPeriodical;
 import com.spring.app.model.OauthToken;
+import com.spring.app.service.LogProductsService;
 import com.spring.app.service.OauthTokenService;
-import com.spring.app.service.ProductsService;
 
 @Component
 public class LoggingFilter implements Filter {
@@ -53,7 +53,7 @@ public class LoggingFilter implements Filter {
 	private OauthTokenService oauthTokenService;
 
 	@Autowired
-	private ProductsService productService;
+	private LogProductsService logProductService;
 	
 	@Value("${spring.social.twitter.app-id}")
 	private String appId;
@@ -70,7 +70,8 @@ public class LoggingFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		logger.info("init!!");
-		jobPeriodical.oneDayJob(productService);
+		//定期ジョブ実行
+		jobPeriodical.oneDayJob(logProductService);
 	}
 	
 	@Override

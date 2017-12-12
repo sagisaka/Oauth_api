@@ -22,12 +22,14 @@ public class LogProductsRestContrller {
 	@Autowired
 	private LogProductsService logProductsServise;
 	
+	//日付とアウトプット可能データの検索
 	@PostMapping
 	public List<LogProduct> getProduct(HttpServletResponse response,@RequestBody LogProduct logProduct) throws IOException {
-		List<LogProduct> products = logProductsServise.checkByDate(logProduct.getLogDate());
-		if(products.isEmpty()){
+		List<LogProduct> products = logProductsServise.findByLogDate(logProduct.getLogDate());
+		List<LogProduct> outputProducts = logProductsServise.findBycheckOutput(products);
+		if(outputProducts.isEmpty()){
 			response.sendError(HttpStatus.NOT_FOUND.value(),"データが見つかりませんでした");
 		}
-		return products;
+		return outputProducts;
 	}
 }

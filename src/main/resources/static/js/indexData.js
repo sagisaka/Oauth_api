@@ -10,6 +10,7 @@ $(document).ready(function() {
 function allData(){
 	$.getScript("js/escape.js", function(){
 		token = escape_html($("#token").val());
+		$('#output').empty();
 		$.ajax({
 			type: 'GET',
 			url:  '/api/product',
@@ -17,7 +18,6 @@ function allData(){
 				'Authorization':token,
 			},
 			success: function(json) {
-				$('#output').empty();
 				for(var i in json){
 					$("#output").append("<tr> <th scope=row>" + json[i].id + "</th> <td> <img id=img src=/image/"+json[i].imageUrl+"  width=100/> </td> <td> " + json[i].name + "</td> <td>"+ json[i].price + "円 </td> <td> " + json[i].author + "</td> <td><a href="+ json[i].id +">詳細ページへ</a></td> </tr>");
 				}
@@ -31,6 +31,7 @@ function allData(){
 function search(){
 	var button = $(this);
 	button.attr("disabled", true);
+	$('#output').empty();
 	$.getScript("js/escape.js", function(){
 		token = escape_html($("#token").val());
 		name = escape_html($("#name").val());
@@ -47,7 +48,6 @@ function search(){
 			data:JSON.stringify(data),
 			contentType: 'application/json',
 			success: function(json) {
-				$('#output').empty();
 				for(var i in json){
 					$("#output").append("<tr> <th scope=row>" + json[i].id + "</th> <td> <img id=img src=/image/"+json[i].imageUrl+"  width=100/> </td> <td> " + json[i].name + "</td> <td>"+ json[i].price + "円 </td> <td> " + json[i].author + "</td> <td><a href="+ json[i].id +">詳細ページへ</a></td> </tr>");
 				}

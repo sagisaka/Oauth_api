@@ -48,4 +48,6 @@ public class LogProduct {
 	
 	private String logDate;
 
+	private Boolean checkOutput;
+	
 }

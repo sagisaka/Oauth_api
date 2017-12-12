@@ -8,4 +8,5 @@ import com.spring.app.model.LogProduct;
 
 public interface LogProductsRepository extends JpaRepository<LogProduct, Integer> {
 	List<LogProduct> findByLogDate(String date);
+	List<LogProduct> findByCheckOutput(Boolean check);
 }
