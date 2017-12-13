@@ -31,7 +31,7 @@ public class JobPeriodical {
 		};
 		Timer timer = new Timer();
 		//1日
-		timer.schedule(task, 0, 60000*60000*24);
+		timer.schedule(task, 0, 60000*60*24);
 	}
 
 }
