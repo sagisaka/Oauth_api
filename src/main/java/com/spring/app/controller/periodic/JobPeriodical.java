@@ -21,7 +21,7 @@ public class JobPeriodical {
 	private LogProductsService logProductService;
 
 	//0時に一回実行
-	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Tokyo")
+	@Scheduled(cron = "0 * * * * *", zone = "Asia/Tokyo")
 	public void oneDayJob(){
 		//登録したログデータからアウトプットする
 		List<LogProduct> logProducts = logProductService.findByCheckOutput(false);
